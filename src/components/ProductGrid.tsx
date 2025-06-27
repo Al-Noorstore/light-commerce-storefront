@@ -103,6 +103,33 @@ const ProductGrid = ({ searchQuery }: ProductGridProps) => {
       price: "PKR 7,500",
       image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
       rating: 4.3
+    },
+    {
+      id: 10,
+      name: "Yoga Mat",
+      category: "Sports & Fitness",
+      price: "PKR 2,200",
+      originalPrice: "PKR 2,800",
+      image: "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=400&h=400&fit=crop",
+      badge: "FITNESS",
+      rating: 4.7
+    },
+    {
+      id: 11,
+      name: "Resistance Bands Set",
+      category: "Sports & Fitness",
+      price: "PKR 1,500",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop",
+      badge: "NEW",
+      rating: 4.5
+    },
+    {
+      id: 12,
+      name: "Protein Shaker Bottle",
+      category: "Sports & Fitness",
+      price: "PKR 800",
+      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop",
+      rating: 4.4
     }
   ]);
 

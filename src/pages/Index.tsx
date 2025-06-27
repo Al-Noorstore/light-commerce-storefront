@@ -30,7 +30,8 @@ const Index = () => {
     'Kitchenware', 
     'Electronics',
     'Home Decor',
-    'Accessories'
+    'Accessories',
+    'Sports & Fitness'
   ];
 
   if (showSplash) {
