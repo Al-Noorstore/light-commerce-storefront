@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Heart, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -130,6 +129,35 @@ const ProductGrid = ({ searchQuery }: ProductGridProps) => {
       price: "PKR 800",
       image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop",
       rating: 4.4
+    },
+    {
+      id: 13,
+      name: "Running Sneakers",
+      category: "Shoes",
+      price: "PKR 5,500",
+      originalPrice: "PKR 7,000",
+      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      badge: "SPORT",
+      rating: 4.6
+    },
+    {
+      id: 14,
+      name: "Formal Leather Shoes",
+      category: "Shoes",
+      price: "PKR 8,000",
+      image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop",
+      badge: "PREMIUM",
+      rating: 4.7
+    },
+    {
+      id: 15,
+      name: "Casual Loafers",
+      category: "Shoes",
+      price: "PKR 4,200",
+      originalPrice: "PKR 5,000",
+      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop",
+      badge: "COMFORT",
+      rating: 4.5
     }
   ]);
 
