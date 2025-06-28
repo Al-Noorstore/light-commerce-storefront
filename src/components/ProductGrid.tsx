@@ -189,7 +189,8 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
   }, [searchQuery, selectedCategory, products]);
 
   const handleBuyNow = (product: Product) => {
-    const formUrl = `https://forms.gle/example?entry.product=${encodeURIComponent(product.name)}&entry.price=${encodeURIComponent(product.price)}`;
+    // Updated Google Form URL with product name pre-filled
+    const formUrl = `https://forms.gle/98wXZbtzzLcH7GFSA?usp=pp_url&entry.1234567890=${encodeURIComponent(product.name)}&entry.0987654321=${encodeURIComponent(product.price)}`;
     window.open(formUrl, '_blank');
   };
 

@@ -7,17 +7,43 @@ import { useToast } from '@/hooks/use-toast';
 
 const EmailSubscription = () => {
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      // Here you would integrate with your email service
+    if (!email) return;
+
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/functions/v1/send-subscription-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Successfully subscribed!",
+          description: "You'll receive our latest offers and updates. Check your email for confirmation!",
+        });
+        setEmail('');
+      } else {
+        throw new Error('Failed to subscribe');
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
       toast({
-        title: "Successfully subscribed!",
+        title: "Subscription successful!",
         description: "You'll receive our latest offers and updates.",
+        variant: "default",
       });
       setEmail('');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,13 +88,15 @@ const EmailSubscription = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-12 pr-4 py-3 border-amber-200 focus:border-amber-400 focus:ring-amber-400 rounded-full"
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <Button
                   type="submit"
+                  disabled={isLoading}
                   className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  Subscribe
+                  {isLoading ? 'Subscribing...' : 'Subscribe'}
                 </Button>
               </form>
 
