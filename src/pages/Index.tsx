@@ -15,6 +15,7 @@ const Index = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All Products');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,6 +35,42 @@ const Index = () => {
     'Sports & Fitness',
     'Shoes'
   ];
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    // Check if the search query matches a category
+    const matchedCategory = categories.find(category => 
+      category.toLowerCase().includes(query.toLowerCase()) && query.trim() !== ''
+    );
+    
+    if (matchedCategory && matchedCategory !== 'All Products') {
+      setSelectedCategory(matchedCategory);
+      // Scroll to products section
+      setTimeout(() => {
+        const productsSection = document.getElementById('products');
+        if (productsSection) {
+          productsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else if (query.trim() === '') {
+      setSelectedCategory('All Products');
+    }
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setSearchQuery('');
+    setIsProductsDropdownOpen(false);
+    
+    // Scroll to products section
+    setTimeout(() => {
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
 
   if (showSplash) {
     return <SplashScreen />;
@@ -77,14 +114,13 @@ const Index = () => {
                 {isProductsDropdownOpen && (
                   <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-amber-100 py-2 z-50">
                     {categories.map((category) => (
-                      <a
+                      <button
                         key={category}
-                        href={`#products`}
-                        className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                        onClick={() => setIsProductsDropdownOpen(false)}
+                        onClick={() => handleCategorySelect(category)}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
                       >
                         {category}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -101,9 +137,9 @@ const Index = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder="Search products or categories..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10 pr-4 py-2 w-64 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
               </div>
@@ -124,9 +160,9 @@ const Index = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search products or categories..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border-amber-200 focus:border-amber-400 focus:ring-amber-400"
               />
             </div>
@@ -143,13 +179,16 @@ const Index = () => {
                   <div className="text-gray-700 font-medium mb-2">All Products</div>
                   <div className="pl-4 space-y-2">
                     {categories.map((category) => (
-                      <a
+                      <button
                         key={category}
-                        href="#products"
-                        className="block text-gray-600 hover:text-amber-600 transition-colors"
+                        onClick={() => {
+                          handleCategorySelect(category);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="block w-full text-left text-gray-600 hover:text-amber-600 transition-colors"
                       >
                         {category}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -175,13 +214,33 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-4">
-              Our Products
+              {selectedCategory === 'All Products' ? 'Our Products' : selectedCategory}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Discover our carefully curated collection of premium products designed to brighten your everyday life.
+              {selectedCategory === 'All Products' 
+                ? 'Discover our carefully curated collection of premium products designed to brighten your everyday life.'
+                : `Browse our selection of ${selectedCategory.toLowerCase()} products.`
+              }
             </p>
+            
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap justify-center gap-2 mt-6">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategorySelect(category)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    selectedCategory === category
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                      : 'bg-white border border-amber-200 text-gray-700 hover:bg-amber-50 hover:border-amber-300'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
-          <ProductGrid searchQuery={searchQuery} />
+          <ProductGrid searchQuery={searchQuery} selectedCategory={selectedCategory} />
         </div>
       </section>
 

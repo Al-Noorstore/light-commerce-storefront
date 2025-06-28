@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Heart, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,9 +18,10 @@ interface Product {
 
 interface ProductGridProps {
   searchQuery: string;
+  selectedCategory?: string;
 }
 
-const ProductGrid = ({ searchQuery }: ProductGridProps) => {
+const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: ProductGridProps) => {
   const [products] = useState<Product[]>([
     {
       id: 1,
@@ -165,12 +167,26 @@ const ProductGrid = ({ searchQuery }: ProductGridProps) => {
   const [visibleProducts, setVisibleProducts] = useState(6);
 
   useEffect(() => {
-    const filtered = products.filter(product =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    let filtered = products;
+    
+    // Filter by category first
+    if (selectedCategory && selectedCategory !== 'All Products') {
+      filtered = filtered.filter(product => 
+        product.category === selectedCategory
+      );
+    }
+    
+    // Then filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
     setFilteredProducts(filtered);
-  }, [searchQuery, products]);
+    setVisibleProducts(6); // Reset visible products when filter changes
+  }, [searchQuery, selectedCategory, products]);
 
   const handleBuyNow = (product: Product) => {
     const formUrl = `https://forms.gle/example?entry.product=${encodeURIComponent(product.name)}&entry.price=${encodeURIComponent(product.price)}`;
@@ -289,7 +305,12 @@ const ProductGrid = ({ searchQuery }: ProductGridProps) => {
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-xl font-semibold text-gray-600 mb-2">No products found</h3>
-          <p className="text-gray-500">Try adjusting your search terms</p>
+          <p className="text-gray-500">
+            {selectedCategory !== 'All Products' 
+              ? `No products found in ${selectedCategory} category${searchQuery ? ` matching "${searchQuery}"` : ''}`
+              : 'Try adjusting your search terms'
+            }
+          </p>
         </div>
       )}
     </div>
