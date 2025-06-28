@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,7 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
+  const [isPoliciesDropdownOpen, setIsPoliciesDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Products');
 
@@ -126,9 +126,49 @@ const Index = () => {
                 )}
               </div>
               
-              <a href="#contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
+              <a href="/contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
                 Contact Us
               </a>
+
+              {/* Policies Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsPoliciesDropdownOpen(!isPoliciesDropdownOpen)}
+                  className="flex items-center text-gray-700 hover:text-amber-600 transition-colors font-medium"
+                >
+                  Policies
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+                
+                {isPoliciesDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-amber-100 py-2 z-50">
+                    <a
+                      href="/delivery-policy"
+                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                    >
+                      Delivery Policy
+                    </a>
+                    <a
+                      href="/return-policy"
+                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                    >
+                      Return Policy
+                    </a>
+                    <a
+                      href="/privacy-policy"
+                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                    >
+                      Privacy Policy
+                    </a>
+                    <a
+                      href="/faqs"
+                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                    >
+                      FAQs
+                    </a>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* Search Bar */}
@@ -192,9 +232,26 @@ const Index = () => {
                     ))}
                   </div>
                 </div>
-                <a href="#contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
+                <a href="/contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
                   Contact Us
                 </a>
+                <div>
+                  <div className="text-gray-700 font-medium mb-2">Policies</div>
+                  <div className="pl-4 space-y-2">
+                    <a href="/delivery-policy" className="block text-gray-600 hover:text-amber-600 transition-colors">
+                      Delivery Policy
+                    </a>
+                    <a href="/return-policy" className="block text-gray-600 hover:text-amber-600 transition-colors">
+                      Return Policy
+                    </a>
+                    <a href="/privacy-policy" className="block text-gray-600 hover:text-amber-600 transition-colors">
+                      Privacy Policy
+                    </a>
+                    <a href="/faqs" className="block text-gray-600 hover:text-amber-600 transition-colors">
+                      FAQs
+                    </a>
+                  </div>
+                </div>
               </nav>
             </div>
           )}
@@ -279,7 +336,7 @@ const Index = () => {
               <ul className="space-y-2 text-amber-100">
                 <li><a href="#home" className="hover:text-white transition-colors">Home</a></li>
                 <li><a href="#products" className="hover:text-white transition-colors">All Products</a></li>
-                <li><a href="#contact" className="hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="/contact" className="hover:text-white transition-colors">Contact Us</a></li>
               </ul>
             </div>
 
@@ -287,10 +344,10 @@ const Index = () => {
             <div>
               <h4 className="text-lg font-semibold mb-4">Policies</h4>
               <ul className="space-y-2 text-amber-100">
-                <li><a href="#delivery" className="hover:text-white transition-colors">Delivery Policy</a></li>
-                <li><a href="#returns" className="hover:text-white transition-colors">Return Policy</a></li>
-                <li><a href="#faqs" className="hover:text-white transition-colors">FAQs</a></li>
-                <li><a href="#privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/delivery-policy" className="hover:text-white transition-colors">Delivery Policy</a></li>
+                <li><a href="/return-policy" className="hover:text-white transition-colors">Return Policy</a></li>
+                <li><a href="/faqs" className="hover:text-white transition-colors">FAQs</a></li>
+                <li><a href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
 
