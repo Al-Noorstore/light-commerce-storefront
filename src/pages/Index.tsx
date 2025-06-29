@@ -8,6 +8,9 @@ import HeroBanner from '@/components/HeroBanner';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
 import EmailSubscription from '@/components/EmailSubscription';
 import SplashScreen from '@/components/SplashScreen';
+import AdminToolbar from '@/components/AdminToolbar';
+import InlineEdit from '@/components/InlineEdit';
+import { useAdmin } from '@/contexts/AdminContext';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -16,6 +19,13 @@ const Index = () => {
   const [isPoliciesDropdownOpen, setIsPoliciesDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Products');
+
+  const { isAdminMode } = useAdmin();
+
+  const handleTextSave = (section: string, field: string, value: string) => {
+    console.log(`Saving ${section}.${field}:`, value);
+    // Here you would implement the actual save logic to your backend
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -88,10 +98,16 @@ const Index = () => {
                 <span className="text-white font-bold text-lg">AN</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                  Al-Noor Store
-                </h1>
-                <p className="text-xs text-gray-600 hidden sm:block">Bringing Light to Your Life!</p>
+                <InlineEdit
+                  value="Al-Noor Store"
+                  onSave={(value) => handleTextSave('header', 'title', value)}
+                  className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent"
+                />
+                <InlineEdit
+                  value="Bringing Light to Your Life!"
+                  onSave={(value) => handleTextSave('header', 'subtitle', value)}
+                  className="text-xs text-gray-600 hidden sm:block"
+                />
               </div>
             </div>
 
@@ -270,15 +286,20 @@ const Index = () => {
       <section id="products" className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-4">
-              {selectedCategory === 'All Products' ? 'Our Products' : selectedCategory}
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              {selectedCategory === 'All Products' 
+            <InlineEdit
+              value={selectedCategory === 'All Products' ? 'Our Products' : selectedCategory}
+              onSave={(value) => handleTextSave('products', 'title', value)}
+              className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-4 block"
+            />
+            <InlineEdit
+              value={selectedCategory === 'All Products' 
                 ? 'Discover our carefully curated collection of premium products designed to brighten your everyday life.'
                 : `Browse our selection of ${selectedCategory.toLowerCase()} products.`
               }
-            </p>
+              onSave={(value) => handleTextSave('products', 'description', value)}
+              type="textarea"
+              className="text-gray-600 max-w-2xl mx-auto block"
+            />
             
             {/* Category Filter Pills */}
             <div className="flex flex-wrap justify-center gap-2 mt-6">
@@ -311,21 +332,41 @@ const Index = () => {
                 <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold">AN</span>
                 </div>
-                <h3 className="text-xl font-bold">Al-Noor Store</h3>
+                <InlineEdit
+                  value="Al-Noor Store"
+                  onSave={(value) => handleTextSave('footer', 'title', value)}
+                  className="text-xl font-bold"
+                />
               </div>
-              <p className="text-amber-100 mb-4">Bringing Light to Your Life!</p>
+              <InlineEdit
+                value="Bringing Light to Your Life!"
+                onSave={(value) => handleTextSave('footer', 'tagline', value)}
+                className="text-amber-100 mb-4 block"
+              />
               <div className="space-y-2 text-amber-100">
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4" />
-                  <span>+92 322 2520101</span>
+                  <InlineEdit
+                    value="+92 322 2520101"
+                    onSave={(value) => handleTextSave('footer', 'phone', value)}
+                    className="text-amber-100"
+                  />
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4" />
-                  <span>alnoormall.pk@gmail.com</span>
+                  <InlineEdit
+                    value="alnoormall.pk@gmail.com"
+                    onSave={(value) => handleTextSave('footer', 'email', value)}
+                    className="text-amber-100"
+                  />
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4" />
-                  <span>Pakistan</span>
+                  <InlineEdit
+                    value="Pakistan"
+                    onSave={(value) => handleTextSave('footer', 'location', value)}
+                    className="text-amber-100"
+                  />
                 </div>
               </div>
             </div>
@@ -364,15 +405,20 @@ const Index = () => {
           </div>
 
           <div className="border-t border-amber-800 mt-8 pt-8 text-center">
-            <p className="text-amber-100">
-              © 2024 Al-Noor Store. All rights reserved. | Bringing Light to Your Life!
-            </p>
+            <InlineEdit
+              value="© 2024 Al-Noor Store. All rights reserved. | Bringing Light to Your Life!"
+              onSave={(value) => handleTextSave('footer', 'copyright', value)}
+              className="text-amber-100"
+            />
           </div>
         </div>
       </footer>
 
       {/* WhatsApp Float Button */}
       <WhatsAppFloat />
+
+      {/* Admin Toolbar */}
+      <AdminToolbar />
     </div>
   );
 };
