@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -32,6 +31,7 @@ import FeatureRequestForm from '@/components/admin/FeatureRequestForm';
 import SettingsManager from '@/components/admin/SettingsManager';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import GoogleSheetsOrders from '@/components/admin/GoogleSheetsOrders';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -114,10 +114,14 @@ const Admin = () => {
       {/* Admin Dashboard */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-11 gap-1">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 gap-1">
             <TabsTrigger value="dashboard" className="flex items-center space-x-1">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="sheets" className="flex items-center space-x-1">
+              <TrendingUp className="h-4 w-4" />
+              <span className="hidden sm:inline">Sheets</span>
             </TabsTrigger>
             <TabsTrigger value="products" className="flex items-center space-x-1">
               <Package className="h-4 w-4" />
@@ -163,6 +167,10 @@ const Admin = () => {
 
           <TabsContent value="dashboard">
             <AdminDashboard />
+          </TabsContent>
+
+          <TabsContent value="sheets">
+            <GoogleSheetsOrders />
           </TabsContent>
 
           <TabsContent value="products">
