@@ -31,48 +31,46 @@ import WebsiteCustomizer from '@/components/admin/WebsiteCustomizer';
 import FeatureRequestForm from '@/components/admin/FeatureRequestForm';
 import SettingsManager from '@/components/admin/SettingsManager';
 import { useToast } from '@/hooks/use-toast';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [adminUser, setAdminUser] = useState<{ email: string; role: string } | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currentUser, logout } = useFirebaseAuth();
 
   useEffect(() => {
-    // Check if admin is already logged in
-    const adminSession = localStorage.getItem('adminSession');
-    if (adminSession) {
-      const session = JSON.parse(adminSession);
-      if (session.email === 'alnoormall.pk@gmail.com') {
-        setIsAuthenticated(true);
-        setAdminUser(session);
-      }
+    // Check if user is authenticated and is the authorized admin
+    if (currentUser && currentUser.email === 'alnoormall.pk@gmail.com') {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
-  }, []);
+  }, [currentUser]);
 
   const handleLogin = (email: string) => {
     if (email === 'alnoormall.pk@gmail.com') {
-      const session = { email, role: 'super_admin', loginTime: new Date().toISOString() };
-      localStorage.setItem('adminSession', JSON.stringify(session));
       setIsAuthenticated(true);
-      setAdminUser(session);
-      toast({
-        title: "Login Successful",
-        description: "Welcome to Al-Noor Store Admin Panel",
-      });
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminSession');
-    setIsAuthenticated(false);
-    setAdminUser(null);
-    navigate('/');
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out",
-    });
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsAuthenticated(false);
+      navigate('/');
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out",
+      });
+    } catch (error) {
+      toast({
+        title: "Logout Error",
+        description: "There was an error logging out. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (!isAuthenticated) {
@@ -96,8 +94,8 @@ const Admin = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{adminUser?.email}</p>
-                <p className="text-xs text-gray-500 capitalize">{adminUser?.role?.replace('_', ' ')}</p>
+                <p className="text-sm font-medium text-gray-900">{currentUser?.email}</p>
+                <p className="text-xs text-gray-500">Super Admin</p>
               </div>
               <Button
                 onClick={handleLogout}
