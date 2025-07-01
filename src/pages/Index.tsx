@@ -1,424 +1,253 @@
-import { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import ProductGrid from '@/components/ProductGrid';
-import HeroBanner from '@/components/HeroBanner';
-import WhatsAppFloat from '@/components/WhatsAppFloat';
-import EmailSubscription from '@/components/EmailSubscription';
-import SplashScreen from '@/components/SplashScreen';
-import AdminToolbar from '@/components/AdminToolbar';
-import InlineEdit from '@/components/InlineEdit';
-import { useAdmin } from '@/contexts/AdminContext';
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  ShoppingBag, 
+  Star, 
+  Truck, 
+  Shield, 
+  Phone, 
+  Mail, 
+  MapPin,
+  Settings,
+  BarChart3
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
-  const [showSplash, setShowSplash] = useState(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
-  const [isPoliciesDropdownOpen, setIsPoliciesDropdownOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All Products');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { isAdminMode } = useAdmin();
-
-  const handleTextSave = (section: string, field: string, value: string) => {
-    console.log(`Saving ${section}.${field}:`, value);
-    // Here you would implement the actual save logic to your backend
-  };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const categories = [
-    'All Products',
-    'Cosmetics',
-    'Clothes',
-    'Kitchenware', 
-    'Electronics',
-    'Home Decor',
-    'Accessories',
-    'Sports & Fitness',
-    'Shoes'
-  ];
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    
-    // Check if the search query matches a category
-    const matchedCategory = categories.find(category => 
-      category.toLowerCase().includes(query.toLowerCase()) && query.trim() !== ''
-    );
-    
-    if (matchedCategory && matchedCategory !== 'All Products') {
-      setSelectedCategory(matchedCategory);
-      // Scroll to products section
-      setTimeout(() => {
-        const productsSection = document.getElementById('products');
-        if (productsSection) {
-          productsSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    } else if (query.trim() === '') {
-      setSelectedCategory('All Products');
+  const featuredProducts = [
+    {
+      id: 1,
+      name: "Premium Face Cream",
+      price: "PKR 2,500",
+      originalPrice: "PKR 3,000",
+      image: "/placeholder.svg",
+      rating: 4.8,
+      reviews: 124,
+      badge: "Best Seller"
+    },
+    {
+      id: 2,
+      name: "Wireless Headphones",
+      price: "PKR 8,500",
+      originalPrice: "PKR 10,000",
+      image: "/placeholder.svg",
+      rating: 4.6,
+      reviews: 89,
+      badge: "New Arrival"
+    },
+    {
+      id: 3,
+      name: "Smart Watch",
+      price: "PKR 15,000",
+      originalPrice: "PKR 18,000",
+      image: "/placeholder.svg",
+      rating: 4.7,
+      reviews: 156,
+      badge: "Hot Deal"
     }
-  };
-
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
-    setSearchQuery('');
-    setIsProductsDropdownOpen(false);
-    
-    // Scroll to products section
-    setTimeout(() => {
-      const productsSection = document.getElementById('products');
-      if (productsSection) {
-        productsSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
-
-  if (showSplash) {
-    return <SplashScreen />;
-  }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-amber-200 sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-lg">AN</span>
               </div>
               <div>
-                <InlineEdit
-                  value="Al-Noor Store"
-                  onSave={(value) => handleTextSave('header', 'title', value)}
-                  className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent"
-                />
-                <InlineEdit
-                  value="Bringing Light to Your Life!"
-                  onSave={(value) => handleTextSave('header', 'subtitle', value)}
-                  className="text-xs text-gray-600 hidden sm:block"
-                />
+                <h1 className="text-2xl font-bold text-gray-900">Al-Noor Store</h1>
+                <p className="text-sm text-gray-600">Premium Quality Products</p>
               </div>
             </div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#home" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
-                Home
-              </a>
-              
-              {/* Products Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsProductsDropdownOpen(!isProductsDropdownOpen)}
-                  className="flex items-center text-gray-700 hover:text-amber-600 transition-colors font-medium"
+            
+            {/* Admin Access Button */}
+            <div className="flex items-center space-x-4">
+              <Link to="/admin">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center space-x-2 border-amber-200 hover:bg-amber-50"
                 >
-                  All Products
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-                
-                {isProductsDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-amber-100 py-2 z-50">
-                    {categories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => handleCategorySelect(category)}
-                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:inline">Admin Panel</span>
+                </Button>
+              </Link>
               
-              <a href="/contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
-                Contact Us
-              </a>
-
-              {/* Policies Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsPoliciesDropdownOpen(!isPoliciesDropdownOpen)}
-                  className="flex items-center text-gray-700 hover:text-amber-600 transition-colors font-medium"
-                >
-                  Policies
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </button>
-                
-                {isPoliciesDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-amber-100 py-2 z-50">
-                    <a
-                      href="/delivery-policy"
-                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                    >
-                      Delivery Policy
-                    </a>
-                    <a
-                      href="/return-policy"
-                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                    >
-                      Return Policy
-                    </a>
-                    <a
-                      href="/privacy-policy"
-                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                    >
-                      Privacy Policy
-                    </a>
-                    <a
-                      href="/faqs"
-                      className="block px-4 py-2 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                    >
-                      FAQs
-                    </a>
-                  </div>
-                )}
-              </div>
-            </nav>
-
-            {/* Search Bar */}
-            <div className="hidden sm:flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search products or categories..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-64 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
-                />
-              </div>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:text-amber-600 transition-colors"
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-
-          {/* Mobile Search */}
-          <div className="sm:hidden mt-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search products or categories..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border-amber-200 focus:border-amber-400 focus:ring-amber-400"
-              />
+              <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                <ShoppingBag className="h-4 w-4 mr-2" />
+                Shop Now
+              </Button>
             </div>
           </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t border-amber-200 pt-4">
-              <nav className="flex flex-col space-y-4">
-                <a href="#home" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
-                  Home
-                </a>
-                <div>
-                  <div className="text-gray-700 font-medium mb-2">All Products</div>
-                  <div className="pl-4 space-y-2">
-                    {categories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => {
-                          handleCategorySelect(category);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="block w-full text-left text-gray-600 hover:text-amber-600 transition-colors"
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <a href="/contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium">
-                  Contact Us
-                </a>
-                <div>
-                  <div className="text-gray-700 font-medium mb-2">Policies</div>
-                  <div className="pl-4 space-y-2">
-                    <a href="/delivery-policy" className="block text-gray-600 hover:text-amber-600 transition-colors">
-                      Delivery Policy
-                    </a>
-                    <a href="/return-policy" className="block text-gray-600 hover:text-amber-600 transition-colors">
-                      Return Policy
-                    </a>
-                    <a href="/privacy-policy" className="block text-gray-600 hover:text-amber-600 transition-colors">
-                      Privacy Policy
-                    </a>
-                    <a href="/faqs" className="block text-gray-600 hover:text-amber-600 transition-colors">
-                      FAQs
-                    </a>
-                  </div>
-                </div>
-              </nav>
-            </div>
-          )}
         </div>
       </header>
 
-      {/* Hero Banner */}
-      <section id="home">
-        <HeroBanner />
+      {/* Hero Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Al-Noor Store</span>
+          </h2>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Discover premium quality products with exceptional service. From beauty essentials to electronics, we bring you the best at unbeatable prices.
+          </p>
+          
+          {/* Quick Admin Access Card */}
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto mb-8 border border-amber-100">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <BarChart3 className="h-6 w-6 text-amber-500" />
+              <h3 className="text-lg font-semibold text-gray-900">Store Management</h3>
+            </div>
+            <p className="text-gray-600 mb-4">Access your admin dashboard to manage products, orders, and analytics</p>
+            <Link to="/admin">
+              <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                Access Admin Panel
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
 
-      {/* Email Subscription */}
-      <EmailSubscription />
-
-      {/* Products Section */}
-      <section id="products" className="py-16">
-        <div className="container mx-auto px-4">
+      {/* Featured Products */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <InlineEdit
-              value={selectedCategory === 'All Products' ? 'Our Products' : selectedCategory}
-              onSave={(value) => handleTextSave('products', 'title', value)}
-              className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-4 block"
-            />
-            <InlineEdit
-              value={selectedCategory === 'All Products' 
-                ? 'Discover our carefully curated collection of premium products designed to brighten your everyday life.'
-                : `Browse our selection of ${selectedCategory.toLowerCase()} products.`
-              }
-              onSave={(value) => handleTextSave('products', 'description', value)}
-              type="textarea"
-              className="text-gray-600 max-w-2xl mx-auto block"
-            />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
+            <p className="text-gray-600">Handpicked products just for you</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredProducts.map((product) => (
+              <Card key={product.id} className="group hover:shadow-xl transition-shadow duration-300">
+                <CardHeader className="p-0">
+                  <div className="relative">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                    <Badge className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 to-orange-500">
+                      {product.badge}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">({product.reviews} reviews)</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xl font-bold text-gray-900">{product.price}</span>
+                      <span className="text-sm text-gray-500 line-through">{product.originalPrice}</span>
+                    </div>
+                    <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                      Add to Cart
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Truck className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Fast Delivery</h3>
+              <p className="text-gray-600">Quick and reliable delivery across Pakistan</p>
+            </div>
             
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap justify-center gap-2 mt-6">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategorySelect(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    selectedCategory === category
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
-                      : 'bg-white border border-amber-200 text-gray-700 hover:bg-amber-50 hover:border-amber-300'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Quality Guarantee</h3>
+              <p className="text-gray-600">100% authentic products with warranty</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Phone className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">24/7 Support</h3>
+              <p className="text-gray-600">Always here to help you</p>
             </div>
           </div>
-          <ProductGrid searchQuery={searchQuery} selectedCategory={selectedCategory} />
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-amber-900 to-orange-900 text-white py-12">
-        <div className="container mx-auto px-4">
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Brand Info */}
             <div>
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold">AN</span>
                 </div>
-                <InlineEdit
-                  value="Al-Noor Store"
-                  onSave={(value) => handleTextSave('footer', 'title', value)}
-                  className="text-xl font-bold"
-                />
+                <span className="text-xl font-bold">Al-Noor Store</span>
               </div>
-              <InlineEdit
-                value="Bringing Light to Your Life!"
-                onSave={(value) => handleTextSave('footer', 'tagline', value)}
-                className="text-amber-100 mb-4 block"
-              />
-              <div className="space-y-2 text-amber-100">
+              <p className="text-gray-400">Your trusted partner for premium quality products</p>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                <li><Link to="/contact" className="text-gray-400 hover:text-white">Contact Us</Link></li>
+                <li><Link to="/delivery-policy" className="text-gray-400 hover:text-white">Delivery Policy</Link></li>
+                <li><Link to="/return-policy" className="text-gray-400 hover:text-white">Return Policy</Link></li>
+                <li><Link to="/admin" className="text-gray-400 hover:text-amber-400">Admin Panel</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
+              <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4" />
-                  <InlineEdit
-                    value="+92 322 2520101"
-                    onSave={(value) => handleTextSave('footer', 'phone', value)}
-                    className="text-amber-100"
-                  />
+                  <span className="text-gray-400">+92-300-1234567</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4" />
-                  <InlineEdit
-                    value="alnoormall.pk@gmail.com"
-                    onSave={(value) => handleTextSave('footer', 'email', value)}
-                    className="text-amber-100"
-                  />
+                  <span className="text-gray-400">alnoormall.pk@gmail.com</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4" />
-                  <InlineEdit
-                    value="Pakistan"
-                    onSave={(value) => handleTextSave('footer', 'location', value)}
-                    className="text-amber-100"
-                  />
+                  <span className="text-gray-400">Karachi, Pakistan</span>
                 </div>
               </div>
             </div>
-
-            {/* Quick Links */}
+            
             <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-amber-100">
-                <li><a href="#home" className="hover:text-white transition-colors">Home</a></li>
-                <li><a href="#products" className="hover:text-white transition-colors">All Products</a></li>
-                <li><a href="/contact" className="hover:text-white transition-colors">Contact Us</a></li>
-              </ul>
-            </div>
-
-            {/* Policies */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Policies</h4>
-              <ul className="space-y-2 text-amber-100">
-                <li><a href="/delivery-policy" className="hover:text-white transition-colors">Delivery Policy</a></li>
-                <li><a href="/return-policy" className="hover:text-white transition-colors">Return Policy</a></li>
-                <li><a href="/faqs" className="hover:text-white transition-colors">FAQs</a></li>
-                <li><a href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              </ul>
-            </div>
-
-            {/* Categories */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Categories</h4>
-              <ul className="space-y-2 text-amber-100">
-                <li><a href="#cosmetics" className="hover:text-white transition-colors">Cosmetics</a></li>
-                <li><a href="#clothes" className="hover:text-white transition-colors">Clothes</a></li>
-                <li><a href="#kitchenware" className="hover:text-white transition-colors">Kitchenware</a></li>
-                <li><a href="#electronics" className="hover:text-white transition-colors">Electronics</a></li>
-              </ul>
+              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
+              <p className="text-gray-400">Stay connected for latest updates and offers</p>
             </div>
           </div>
-
-          <div className="border-t border-amber-800 mt-8 pt-8 text-center">
-            <InlineEdit
-              value="© 2024 Al-Noor Store. All rights reserved. | Bringing Light to Your Life!"
-              onSave={(value) => handleTextSave('footer', 'copyright', value)}
-              className="text-amber-100"
-            />
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+            <p className="text-gray-400">&copy; 2024 Al-Noor Store. All rights reserved.</p>
           </div>
         </div>
       </footer>
-
-      {/* WhatsApp Float Button */}
-      <WhatsAppFloat />
-
-      {/* Admin Toolbar */}
-      <AdminToolbar />
     </div>
   );
 };
