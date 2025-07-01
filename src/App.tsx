@@ -8,6 +8,7 @@ import { AdminProvider } from "@/contexts/AdminContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
+import TestAdmin from "./pages/TestAdmin";
 import Contact from "./pages/Contact";
 import DeliveryPolicy from "./pages/DeliveryPolicy";
 import ReturnPolicy from "./pages/ReturnPolicy";
@@ -28,12 +29,12 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/test-admin" element={<TestAdmin />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/delivery-policy" element={<DeliveryPolicy />} />
               <Route path="/return-policy" element={<ReturnPolicy />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/faqs" element={<FAQs />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

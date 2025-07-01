@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,8 @@ import {
   Mail, 
   MapPin,
   Settings,
-  BarChart3
+  BarChart3,
+  Lock
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -68,8 +68,19 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Admin Access Button */}
-            <div className="flex items-center space-x-4">
+            {/* Admin Access Buttons */}
+            <div className="flex items-center space-x-2">
+              <Link to="/test-admin">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center space-x-2 border-blue-200 hover:bg-blue-50"
+                >
+                  <Lock className="h-4 w-4" />
+                  <span className="hidden sm:inline">Test Admin</span>
+                </Button>
+              </Link>
+              
               <Link to="/admin">
                 <Button 
                   variant="outline" 
@@ -100,18 +111,43 @@ const Index = () => {
             Discover premium quality products with exceptional service. From beauty essentials to electronics, we bring you the best at unbeatable prices.
           </p>
           
-          {/* Quick Admin Access Card */}
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto mb-8 border border-amber-100">
-            <div className="flex items-center justify-center space-x-3 mb-4">
-              <BarChart3 className="h-6 w-6 text-amber-500" />
-              <h3 className="text-lg font-semibold text-gray-900">Store Management</h3>
+          {/* Admin Access Cards */}
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
+            {/* Test Admin Card */}
+            <div className="bg-white rounded-lg shadow-lg p-6 border border-blue-100">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <Lock className="h-6 w-6 text-blue-500" />
+                <h3 className="text-lg font-semibold text-gray-900">Test Admin Route</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Verify that admin routing is working correctly</p>
+              <Link to="/test-admin">
+                <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+                  Test Admin Access
+                </Button>
+              </Link>
             </div>
-            <p className="text-gray-600 mb-4">Access your admin dashboard to manage products, orders, and analytics</p>
-            <Link to="/admin">
-              <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                Access Admin Panel
-              </Button>
-            </Link>
+
+            {/* Full Admin Card */}
+            <div className="bg-white rounded-lg shadow-lg p-6 border border-amber-100">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <BarChart3 className="h-6 w-6 text-amber-500" />
+                <h3 className="text-lg font-semibold text-gray-900">Full Admin Panel</h3>
+              </div>
+              <p className="text-gray-600 mb-4">Complete store management with Firebase auth</p>
+              <Link to="/admin">
+                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                  Access Admin Panel
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Access Info */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-2xl mx-auto">
+            <h4 className="font-semibold text-green-800 mb-2">🔐 Admin Access Information</h4>
+            <p className="text-green-700 text-sm">
+              Only <strong>alnoormall.pk@gmail.com</strong> can access the admin panel via Firebase Auth
+            </p>
           </div>
         </div>
       </section>
