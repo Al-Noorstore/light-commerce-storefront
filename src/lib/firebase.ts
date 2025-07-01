@@ -1,5 +1,5 @@
 
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -14,8 +14,8 @@ const firebaseConfig = {
   measurementId: "G-2B8FGKDXF0"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase only if no apps exist
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
@@ -23,7 +23,7 @@ export const auth = getAuth(app);
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 
-// Initialize Analytics
-export const analytics = getAnalytics(app);
+// Initialize Analytics (only in browser environment)
+export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 export default app;
