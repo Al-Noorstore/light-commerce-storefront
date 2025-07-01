@@ -8,10 +8,10 @@ const firebaseConfig = {
   apiKey: "AIzaSyDT5KnHMY5mrZujDGBxip7qBOUlQxmMa4A",
   authDomain: "al-noor-store-owners.firebaseapp.com",
   projectId: "al-noor-store-owners",
-  storageBucket: "al-noor-store-owners.firebasestorage.app",
+  storageBucket: "al-noor-store-owners.appspot.com",
   messagingSenderId: "790841443770",
-  appId: "1:790841443770:web:94c58d2d40a817bf328983",
-  measurementId: "G-CSFL3M67RH"
+  appId: "1:790841443770:web:e4f43c232a2d5fab328983",
+  measurementId: "G-2B8FGKDXF0"
 };
 
 // Initialize Firebase

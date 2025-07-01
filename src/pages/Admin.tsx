@@ -32,6 +32,7 @@ import SettingsManager from '@/components/admin/SettingsManager';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import GoogleSheetsOrders from '@/components/admin/GoogleSheetsOrders';
+import IntegratedStockManager from '@/components/admin/IntegratedStockManager';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -119,6 +120,10 @@ const Admin = () => {
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
             </TabsTrigger>
+            <TabsTrigger value="integrated" className="flex items-center space-x-1">
+              <TrendingUp className="h-4 w-4" />
+              <span className="hidden sm:inline">Live Data</span>
+            </TabsTrigger>
             <TabsTrigger value="sheets" className="flex items-center space-x-1">
               <TrendingUp className="h-4 w-4" />
               <span className="hidden sm:inline">Sheets</span>
@@ -167,6 +172,10 @@ const Admin = () => {
 
           <TabsContent value="dashboard">
             <AdminDashboard />
+          </TabsContent>
+
+          <TabsContent value="integrated">
+            <IntegratedStockManager />
           </TabsContent>
 
           <TabsContent value="sheets">

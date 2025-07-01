@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchOrdersFromSheet, addOrderToSheet, updateOrderStatus } from '@/lib/googleSheets';
+import { fetchOrdersFromSheet, addOrderToSheet, updateOrderStatus } from '@/lib/googleSheetsApi';
 
 interface OrderData {
   customerName: string;
@@ -28,6 +28,7 @@ export const useGoogleSheets = () => {
     queryKey: ['google-sheets-orders'],
     queryFn: fetchOrdersFromSheet,
     refetchInterval: 30000, // Refresh every 30 seconds
+    retry: 3,
   });
 
   // Add new order mutation
