@@ -1,238 +1,234 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  ShoppingBag, 
-  Star, 
-  Truck, 
-  Shield, 
-  Phone, 
-  Mail, 
-  MapPin,
-  Settings,
-  BarChart3,
-  Lock
-} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, Star, Gift, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [email, setEmail] = useState("");
 
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Premium Face Cream",
-      price: "PKR 2,500",
-      originalPrice: "PKR 3,000",
-      image: "/placeholder.svg",
-      rating: 4.8,
-      reviews: 124,
-      badge: "Best Seller"
-    },
-    {
-      id: 2,
-      name: "Wireless Headphones",
-      price: "PKR 8,500",
-      originalPrice: "PKR 10,000",
-      image: "/placeholder.svg",
-      rating: 4.6,
-      reviews: 89,
-      badge: "New Arrival"
-    },
-    {
-      id: 3,
-      name: "Smart Watch",
-      price: "PKR 15,000",
-      originalPrice: "PKR 18,000",
-      image: "/placeholder.svg",
-      rating: 4.7,
-      reviews: 156,
-      badge: "Hot Deal"
-    }
+  const categories = [
+    "All Products", "Cosmetics", "Clothes", "Kitchenware", 
+    "Electronics", "Home Decor", "Accessories", "Sports & Fitness", "Shoes"
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+      <header className="bg-white shadow-sm sticky top-0 z-40">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-lg">AN</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xl">AN</span>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Al-Noor Store</h1>
-                <p className="text-sm text-gray-600">Premium Quality Products</p>
-              </div>
+              <h1 className="text-xl font-bold text-gray-900">Al-Noor Store</h1>
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                <ShoppingBag className="h-4 w-4 mr-2" />
-                Shop Now
-              </Button>
-            </div>
+            <Menu className="h-6 w-6 text-gray-600" />
+          </div>
+          
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search products or categories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-full rounded-full border-2 border-orange-200 focus:border-orange-400"
+            />
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Al-Noor Store</span>
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Discover premium quality products with exceptional service. From beauty essentials to electronics, we bring you the best at unbeatable prices.
+      {/* Hero Banner */}
+      <section className="relative h-80 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 flex items-center justify-center text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative z-10 text-center px-4">
+          <div className="inline-block bg-orange-500 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            ✨ Bringing Light to Your Life! ✨
+          </div>
+          <h2 className="text-4xl font-bold mb-4">Quality Electronics</h2>
+          <p className="text-lg mb-6 opacity-90">Latest gadgets and accessories</p>
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full">
+            Shop Electronics
+          </Button>
+        </div>
+        
+        {/* Navigation Arrows */}
+        <button className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-black/30 rounded-full flex items-center justify-center text-white">
+          ‹
+        </button>
+        <button className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-black/30 rounded-full flex items-center justify-center text-white">
+          ›
+        </button>
+        
+        {/* Dots Indicator */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+          <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+          <div className="w-2 h-2 bg-white rounded-full"></div>
+        </div>
+      </section>
+
+      {/* Email Subscription */}
+      <section className="py-12 px-4">
+        <div className="max-w-md mx-auto">
+          <div className="bg-white rounded-2xl p-8 shadow-lg text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Gift className="h-8 w-8 text-white" />
+            </div>
+            
+            <h3 className="text-3xl font-bold text-orange-600 mb-2">Get Exclusive</h3>
+            <h3 className="text-3xl font-bold text-orange-600 mb-6">Offers!</h3>
+            
+            <p className="text-gray-600 mb-6">Subscribe to our newsletter and be the first to know about</p>
+            
+            <div className="space-y-4 mb-6">
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-full border-2 border-orange-200 focus:border-orange-400 px-4 py-3"
+              />
+              <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-3 rounded-full">
+                Subscribe
+              </Button>
+            </div>
+            
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-gray-600">Exclusive Discounts</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-gray-600">Early Access</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="text-gray-600">No Spam Guarantee</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Products Section */}
+      <section className="py-12 px-4">
+        <div className="max-w-md mx-auto text-center">
+          <h2 className="text-3xl font-bold text-orange-600 mb-4">Our Products</h2>
+          <p className="text-gray-600 mb-8">
+            Discover our carefully curated collection of premium products designed to brighten your everyday life.
           </p>
           
-          <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-lg px-8 py-3">
-            <ShoppingBag className="h-5 w-5 mr-2" />
-            Start Shopping Now
+          {/* Category Grid */}
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            {categories.map((category, index) => (
+              <Button
+                key={category}
+                variant={index === 0 ? "default" : "outline"}
+                className={`rounded-full py-3 ${
+                  index === 0 
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white" 
+                    : "border-orange-200 text-gray-700 hover:border-orange-400"
+                }`}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+
+          {/* Featured Product */}
+          <div className="bg-white rounded-2xl overflow-hidden shadow-lg mb-6">
+            <div className="relative">
+              <img
+                src="/placeholder.svg"
+                alt="Birthday Cake"
+                className="w-full h-48 object-cover"
+              />
+              <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                20% OFF
+              </div>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full rounded-full border-2 border-orange-300 text-orange-600 hover:bg-orange-50 py-3 font-semibold"
+          >
+            Load More Products
           </Button>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>
-            <p className="text-gray-600">Handpicked products just for you</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map((product) => (
-              <Card key={product.id} className="group hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="p-0">
-                  <div className="relative">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                    />
-                    <Badge className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 to-orange-500">
-                      {product.badge}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
-                    </div>
-                    <span className="text-sm text-gray-500">({product.reviews} reviews)</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-gray-900">{product.price}</span>
-                      <span className="text-sm text-gray-500 line-through">{product.originalPrice}</span>
-                    </div>
-                    <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                      Add to Cart
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Truck className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Fast Delivery</h3>
-              <p className="text-gray-600">Quick and reliable delivery across Pakistan</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Quality Guarantee</h3>
-              <p className="text-gray-600">100% authentic products with warranty</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">24/7 Support</h3>
-              <p className="text-gray-600">Always here to help you</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">AN</span>
-                </div>
-                <span className="text-xl font-bold">Al-Noor Store</span>
+      <footer className="bg-amber-900 text-white py-12 px-4">
+        <div className="max-w-md mx-auto">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xl">AN</span>
               </div>
-              <p className="text-gray-400">Your trusted partner for premium quality products</p>
+              <h3 className="text-2xl font-bold">Al-Noor Store</h3>
             </div>
+            <p className="text-amber-200 mb-6">Bringing Light to Your Life!</p>
             
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><Link to="/contact" className="text-gray-400 hover:text-white">Contact Us</Link></li>
-                <li><Link to="/delivery-policy" className="text-gray-400 hover:text-white">Delivery Policy</Link></li>
-                <li><Link to="/return-policy" className="text-gray-400 hover:text-white">Return Policy</Link></li>
-                <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4" />
-                  <span className="text-gray-400">+92-300-1234567</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4" />
-                  <span className="text-gray-400">alnoormall.pk@gmail.com</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-4 w-4" />
-                  <span className="text-gray-400">Karachi, Pakistan</span>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
-              <p className="text-gray-400">Stay connected for latest updates and offers</p>
+            <div className="space-y-2 mb-8">
+              <p className="text-amber-200">📞 +92 322 2520101</p>
+              <p className="text-amber-200">📧 alnoormall.pk@gmail.com</p>
+              <p className="text-amber-200">📍 Pakistan</p>
             </div>
           </div>
-          
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">
-              &copy; 2024 Al-Noor Store. All rights reserved. | 
-              <Link to="/admin" className="text-amber-400 hover:text-amber-300 ml-2">
+
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-lg font-semibold mb-3">Quick Links</h4>
+              <div className="space-y-2">
+                <Link to="/" className="block text-amber-200 hover:text-white">Home</Link>
+                <Link to="/products" className="block text-amber-200 hover:text-white">All Products</Link>
+                <Link to="/contact" className="block text-amber-200 hover:text-white">Contact Us</Link>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold mb-3">Policies</h4>
+              <div className="space-y-2">
+                <Link to="/delivery-policy" className="block text-amber-200 hover:text-white">Delivery Policy</Link>
+                <Link to="/return-policy" className="block text-amber-200 hover:text-white">Return Policy</Link>
+                <Link to="/faqs" className="block text-amber-200 hover:text-white">FAQs</Link>
+                <Link to="/privacy-policy" className="block text-amber-200 hover:text-white">Privacy Policy</Link>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold mb-3">Categories</h4>
+              <div className="space-y-2">
+                <p className="text-amber-200">Cosmetics</p>
+                <p className="text-amber-200">Clothes</p>
+                <p className="text-amber-200">Kitchenware</p>
+                <p className="text-amber-200">Electronics</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-amber-800 mt-8 pt-6 text-center">
+            <p className="text-amber-200 text-sm">
+              © 2024 Al-Noor Store. All rights reserved. | 
+              <Link to="/admin" className="text-amber-300 hover:text-white ml-1">
                 Admin Panel
               </Link>
-              | Bringing Light to Your Life!
+              <br />
+              Bringing Light to Your Life!
             </p>
           </div>
         </div>
       </footer>
+
+      <WhatsAppFloat />
     </div>
   );
 };
