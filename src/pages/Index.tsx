@@ -280,7 +280,12 @@ const Index = () => {
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400">&copy; 2024 Al-Noor Store. All rights reserved.</p>
+            <p className="text-gray-400">
+              &copy; 2024 Al-Noor Store. All rights reserved. | Bringing Light to Your Life! | 
+              <Link to="/admin" className="text-amber-400 hover:text-amber-300 ml-2">
+                Admin Panel
+              </Link>
+            </p>
           </div>
         </div>
       </footer>
