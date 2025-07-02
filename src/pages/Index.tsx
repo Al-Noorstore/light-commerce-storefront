@@ -68,30 +68,7 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Admin Access Buttons */}
             <div className="flex items-center space-x-2">
-              <Link to="/test-admin">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center space-x-2 border-blue-200 hover:bg-blue-50"
-                >
-                  <Lock className="h-4 w-4" />
-                  <span className="hidden sm:inline">Test Admin</span>
-                </Button>
-              </Link>
-              
-              <Link to="/admin">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center space-x-2 border-amber-200 hover:bg-amber-50"
-                >
-                  <Settings className="h-4 w-4" />
-                  <span className="hidden sm:inline">Admin Panel</span>
-                </Button>
-              </Link>
-              
               <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
                 <ShoppingBag className="h-4 w-4 mr-2" />
                 Shop Now
@@ -111,44 +88,10 @@ const Index = () => {
             Discover premium quality products with exceptional service. From beauty essentials to electronics, we bring you the best at unbeatable prices.
           </p>
           
-          {/* Admin Access Cards */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8">
-            {/* Test Admin Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border border-blue-100">
-              <div className="flex items-center justify-center space-x-3 mb-4">
-                <Lock className="h-6 w-6 text-blue-500" />
-                <h3 className="text-lg font-semibold text-gray-900">Test Admin Route</h3>
-              </div>
-              <p className="text-gray-600 mb-4">Verify that admin routing is working correctly</p>
-              <Link to="/test-admin">
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
-                  Test Admin Access
-                </Button>
-              </Link>
-            </div>
-
-            {/* Full Admin Card */}
-            <div className="bg-white rounded-lg shadow-lg p-6 border border-amber-100">
-              <div className="flex items-center justify-center space-x-3 mb-4">
-                <BarChart3 className="h-6 w-6 text-amber-500" />
-                <h3 className="text-lg font-semibold text-gray-900">Full Admin Panel</h3>
-              </div>
-              <p className="text-gray-600 mb-4">Complete store management with Firebase auth</p>
-              <Link to="/admin">
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
-                  Access Admin Panel
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Access Info */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-2xl mx-auto">
-            <h4 className="font-semibold text-green-800 mb-2">🔐 Admin Access Information</h4>
-            <p className="text-green-700 text-sm">
-              Only <strong>alnoormall.pk@gmail.com</strong> can access the admin panel via Firebase Auth
-            </p>
-          </div>
+          <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-lg px-8 py-3">
+            <ShoppingBag className="h-5 w-5 mr-2" />
+            Start Shopping Now
+          </Button>
         </div>
       </section>
 
@@ -251,7 +194,7 @@ const Index = () => {
                 <li><Link to="/contact" className="text-gray-400 hover:text-white">Contact Us</Link></li>
                 <li><Link to="/delivery-policy" className="text-gray-400 hover:text-white">Delivery Policy</Link></li>
                 <li><Link to="/return-policy" className="text-gray-400 hover:text-white">Return Policy</Link></li>
-                <li><Link to="/admin" className="text-gray-400 hover:text-amber-400">Admin Panel</Link></li>
+                <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
               </ul>
             </div>
             
@@ -281,10 +224,11 @@ const Index = () => {
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
             <p className="text-gray-400">
-              &copy; 2024 Al-Noor Store. All rights reserved. | Bringing Light to Your Life! | 
+              &copy; 2024 Al-Noor Store. All rights reserved. | 
               <Link to="/admin" className="text-amber-400 hover:text-amber-300 ml-2">
                 Admin Panel
               </Link>
+              | Bringing Light to Your Life!
             </p>
           </div>
         </div>
