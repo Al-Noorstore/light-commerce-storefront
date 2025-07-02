@@ -15,18 +15,21 @@ import {
   Palette,
   MessageSquare,
   TrendingUp,
-  Boxes
+  Boxes,
+  Zap,
+  Edit3
 } from 'lucide-react';
 import AdminAuth from '@/components/admin/AdminAuth';
-import AdminDashboard from '@/components/admin/AdminDashboard';
+import RealTimeDashboard from '@/components/admin/RealTimeDashboard';
 import ProductManager from '@/components/admin/ProductManager';
 import CategoryManager from '@/components/admin/CategoryManager';
 import OrdersManager from '@/components/admin/OrdersManager';
-import BulkUpload from '@/components/admin/BulkUpload';
+import EnhancedBulkUpload from '@/components/admin/EnhancedBulkUpload';
 import StockManager from '@/components/admin/StockManager';
 import AdminRoleManager from '@/components/admin/AdminRoleManager';
 import NotificationManager from '@/components/admin/NotificationManager';
-import WebsiteCustomizer from '@/components/admin/WebsiteCustomizer';
+import WebsiteEditor from '@/components/admin/WebsiteEditor';
+import QuickActions from '@/components/admin/QuickActions';
 import FeatureRequestForm from '@/components/admin/FeatureRequestForm';
 import SettingsManager from '@/components/admin/SettingsManager';
 import { useToast } from '@/hooks/use-toast';
@@ -90,7 +93,7 @@ const Admin = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Al-Noor Admin Panel</h1>
-                <p className="text-sm text-gray-600">Complete Store Management System</p>
+                <p className="text-sm text-gray-600">Complete Real-Time Store Management</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -115,10 +118,14 @@ const Admin = () => {
       {/* Admin Dashboard */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 gap-1">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-14 gap-1">
             <TabsTrigger value="dashboard" className="flex items-center space-x-1">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="quick" className="flex items-center space-x-1">
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">Quick</span>
             </TabsTrigger>
             <TabsTrigger value="integrated" className="flex items-center space-x-1">
               <TrendingUp className="h-4 w-4" />
@@ -138,7 +145,7 @@ const Admin = () => {
             </TabsTrigger>
             <TabsTrigger value="upload" className="flex items-center space-x-1">
               <Upload className="h-4 w-4" />
-              <span className="hidden sm:inline">Upload</span>
+              <span className="hidden sm:inline">Bulk Upload</span>
             </TabsTrigger>
             <TabsTrigger value="orders" className="flex items-center space-x-1">
               <ShoppingBag className="h-4 w-4" />
@@ -148,6 +155,10 @@ const Admin = () => {
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Categories</span>
             </TabsTrigger>
+            <TabsTrigger value="editor" className="flex items-center space-x-1">
+              <Edit3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Website</span>
+            </TabsTrigger>
             <TabsTrigger value="admins" className="flex items-center space-x-1">
               <Shield className="h-4 w-4" />
               <span className="hidden sm:inline">Admins</span>
@@ -155,10 +166,6 @@ const Admin = () => {
             <TabsTrigger value="notifications" className="flex items-center space-x-1">
               <Bell className="h-4 w-4" />
               <span className="hidden sm:inline">Alerts</span>
-            </TabsTrigger>
-            <TabsTrigger value="customizer" className="flex items-center space-x-1">
-              <Palette className="h-4 w-4" />
-              <span className="hidden sm:inline">Design</span>
             </TabsTrigger>
             <TabsTrigger value="requests" className="flex items-center space-x-1">
               <MessageSquare className="h-4 w-4" />
@@ -171,7 +178,11 @@ const Admin = () => {
           </TabsList>
 
           <TabsContent value="dashboard">
-            <AdminDashboard />
+            <RealTimeDashboard />
+          </TabsContent>
+
+          <TabsContent value="quick">
+            <QuickActions />
           </TabsContent>
 
           <TabsContent value="integrated">
@@ -191,7 +202,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="upload">
-            <BulkUpload />
+            <EnhancedBulkUpload />
           </TabsContent>
 
           <TabsContent value="orders">
@@ -202,16 +213,16 @@ const Admin = () => {
             <CategoryManager />
           </TabsContent>
 
+          <TabsContent value="editor">
+            <WebsiteEditor />
+          </TabsContent>
+
           <TabsContent value="admins">
             <AdminRoleManager />
           </TabsContent>
 
           <TabsContent value="notifications">
             <NotificationManager />
-          </TabsContent>
-
-          <TabsContent value="customizer">
-            <WebsiteCustomizer />
           </TabsContent>
 
           <TabsContent value="requests">
