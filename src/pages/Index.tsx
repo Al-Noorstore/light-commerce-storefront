@@ -4,15 +4,26 @@ import { Input } from "@/components/ui/input";
 import { Search, Star, Gift, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import ProductGrid from "@/components/ProductGrid";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [email, setEmail] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Products");
 
   const categories = [
     "All Products", "Cosmetics", "Clothes", "Kitchenware", 
     "Electronics", "Home Decor", "Accessories", "Sports & Fitness", "Shoes"
   ];
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    // Scroll to products section
+    const productsSection = document.getElementById('products-section');
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50">
@@ -118,50 +129,37 @@ const Index = () => {
       </section>
 
       {/* Our Products Section */}
-      <section className="py-12 px-4">
-        <div className="max-w-md mx-auto text-center">
-          <h2 className="text-3xl font-bold text-orange-600 mb-4">Our Products</h2>
-          <p className="text-gray-600 mb-8">
-            Discover our carefully curated collection of premium products designed to brighten your everyday life.
-          </p>
-          
-          {/* Category Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-8">
-            {categories.map((category, index) => (
-              <Button
-                key={category}
-                variant={index === 0 ? "default" : "outline"}
-                className={`rounded-full py-3 ${
-                  index === 0 
-                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white" 
-                    : "border-orange-200 text-gray-700 hover:border-orange-400"
-                }`}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-
-          {/* Featured Product */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-lg mb-6">
-            <div className="relative">
-              <img
-                src="/placeholder.svg"
-                alt="Birthday Cake"
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                20% OFF
-              </div>
+      <section id="products-section" className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-orange-600 mb-4">
+              {selectedCategory === 'All Products' ? 'Our Products' : selectedCategory}
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Discover our carefully curated collection of premium products designed to brighten your everyday life.
+            </p>
+            
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  onClick={() => handleCategorySelect(category)}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  className={`rounded-full px-6 py-2 text-sm font-medium transition-all duration-300 ${
+                    selectedCategory === category 
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" 
+                      : "border-orange-200 text-gray-700 hover:border-orange-400 hover:bg-orange-50"
+                  }`}
+                >
+                  {category}
+                </Button>
+              ))}
             </div>
           </div>
-
-          <Button
-            variant="outline"
-            className="w-full rounded-full border-2 border-orange-300 text-orange-600 hover:bg-orange-50 py-3 font-semibold"
-          >
-            Load More Products
-          </Button>
+          
+          {/* Product Grid */}
+          <ProductGrid searchQuery={searchTerm} selectedCategory={selectedCategory} />
         </div>
       </section>
 
