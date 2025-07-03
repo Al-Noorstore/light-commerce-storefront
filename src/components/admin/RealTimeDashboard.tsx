@@ -71,14 +71,10 @@ const RealTimeDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Refresh */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Real-Time Dashboard</h2>
-          <p className="text-gray-600">Live data from Firebase & Google Sheets</p>
-        </div>
+      {/* Refresh Controls */}
+      <div className="flex items-center justify-end">
         <div className="flex items-center space-x-4">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             Last updated: {lastRefresh.toLocaleTimeString()}
           </div>
           <Button onClick={handleManualRefresh} variant="outline" size="sm">
