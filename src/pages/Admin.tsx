@@ -120,68 +120,171 @@ const Admin = () => {
       {/* Admin Dashboard */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-15 gap-1">
-            <TabsTrigger value="dashboard" className="flex items-center space-x-1">
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="quick" className="flex items-center space-x-1">
-              <Zap className="h-4 w-4" />
-              <span className="hidden sm:inline">Quick</span>
-            </TabsTrigger>
-            <TabsTrigger value="integrated" className="flex items-center space-x-1">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Live Data</span>
-            </TabsTrigger>
-            <TabsTrigger value="sheets" className="flex items-center space-x-1">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Sheets</span>
-            </TabsTrigger>
-            <TabsTrigger value="products" className="flex items-center space-x-1">
-              <Package className="h-4 w-4" />
-              <span className="hidden sm:inline">Products</span>
-            </TabsTrigger>
-            <TabsTrigger value="stock" className="flex items-center space-x-1">
-              <Boxes className="h-4 w-4" />
-              <span className="hidden sm:inline">Stock</span>
-            </TabsTrigger>
-            <TabsTrigger value="upload" className="flex items-center space-x-1">
-              <Upload className="h-4 w-4" />
-              <span className="hidden sm:inline">Bulk Upload</span>
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="flex items-center space-x-1">
-              <ShoppingBag className="h-4 w-4" />
-              <span className="hidden sm:inline">Orders</span>
-            </TabsTrigger>
-            <TabsTrigger value="categories" className="flex items-center space-x-1">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Categories</span>
-            </TabsTrigger>
-            <TabsTrigger value="editor" className="flex items-center space-x-1">
-              <Edit3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Website</span>
-            </TabsTrigger>
-            <TabsTrigger value="admins" className="flex items-center space-x-1">
-              <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">Admins</span>
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center space-x-1">
-              <Bell className="h-4 w-4" />
-              <span className="hidden sm:inline">Alerts</span>
-            </TabsTrigger>
-            <TabsTrigger value="requests" className="flex items-center space-x-1">
-              <MessageSquare className="h-4 w-4" />
-              <span className="hidden sm:inline">Requests</span>
-            </TabsTrigger>
-            <TabsTrigger value="passwords" className="flex items-center space-x-1">
-              <Lock className="h-4 w-4" />
-              <span className="hidden sm:inline">Passwords</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center space-x-1">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
+          {/* Main Navigation - Organized in logical groups */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            {/* Core Management */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground px-2">Core Management</h3>
+              <div className="grid grid-cols-2 gap-1">
+                <button
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'dashboard' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('quick')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'quick' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Zap className="h-4 w-4" />
+                  <span>Quick Actions</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Product Management */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground px-2">Product Management</h3>
+              <div className="grid grid-cols-2 gap-1">
+                <button
+                  onClick={() => setActiveTab('products')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'products' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Package className="h-4 w-4" />
+                  <span>Products</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('stock')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'stock' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Boxes className="h-4 w-4" />
+                  <span>Stock</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('upload')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'upload' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Upload className="h-4 w-4" />
+                  <span>Bulk Upload</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('categories')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'categories' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Users className="h-4 w-4" />
+                  <span>Categories</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Orders & Data */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground px-2">Orders & Analytics</h3>
+              <div className="grid grid-cols-2 gap-1">
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'orders' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  <span>Orders</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('integrated')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'integrated' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  <span>Live Data</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('sheets')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'sheets' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  <span>Sheets</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('notifications')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'notifications' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Bell className="h-4 w-4" />
+                  <span>Alerts</span>
+                </button>
+              </div>
+            </div>
+
+            {/* System Settings */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground px-2">System Settings</h3>
+              <div className="grid grid-cols-2 gap-1">
+                <button
+                  onClick={() => setActiveTab('editor')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'editor' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Edit3 className="h-4 w-4" />
+                  <span>Website</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('admins')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'admins' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Admins</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('passwords')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'passwords' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Lock className="h-4 w-4" />
+                  <span>Passwords</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('requests')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'requests' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  <span>Requests</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('settings')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'settings' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Settings</span>
+                </button>
+              </div>
+            </div>
+          </div>
 
           <TabsContent value="dashboard">
             <RealTimeDashboard />
