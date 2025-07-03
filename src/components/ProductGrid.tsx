@@ -15,6 +15,8 @@ interface Product {
   image: string;
   badge?: string;
   rating?: number;
+  buyNowLink?: string;
+  buyNowText?: string;
 }
 
 interface ProductGridProps {
@@ -203,9 +205,14 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
   };
 
   const handleBuyNow = (product: Product) => {
-    // Updated Google Form URL with product name pre-filled
-    const formUrl = `https://forms.gle/98wXZbtzzLcH7GFSA?usp=pp_url&entry.1234567890=${encodeURIComponent(product.name)}&entry.0987654321=${encodeURIComponent(product.price)}`;
-    window.open(formUrl, '_blank');
+    if (product.buyNowLink) {
+      // Use custom buy now link if provided
+      window.open(product.buyNowLink, '_blank');
+    } else {
+      // Fallback to default Google Form URL with product name pre-filled
+      const formUrl = `https://forms.gle/98wXZbtzzLcH7GFSA?usp=pp_url&entry.1234567890=${encodeURIComponent(product.name)}&entry.0987654321=${encodeURIComponent(product.price)}`;
+      window.open(formUrl, '_blank');
+    }
   };
 
   const loadMoreProducts = () => {
@@ -327,7 +334,7 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
                   className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 group"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2 group-hover:animate-bounce" />
-                  Buy Now
+                  {product.buyNowText || 'Buy Now'}
                 </Button>
               </div>
             </CardContent>

@@ -17,7 +17,8 @@ import {
   TrendingUp,
   Boxes,
   Zap,
-  Edit3
+  Edit3,
+  Lock
 } from 'lucide-react';
 import AdminAuth from '@/components/admin/AdminAuth';
 import RealTimeDashboard from '@/components/admin/RealTimeDashboard';
@@ -32,6 +33,7 @@ import WebsiteEditor from '@/components/admin/WebsiteEditor';
 import QuickActions from '@/components/admin/QuickActions';
 import FeatureRequestForm from '@/components/admin/FeatureRequestForm';
 import SettingsManager from '@/components/admin/SettingsManager';
+import PasswordManager from '@/components/admin/PasswordManager';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import GoogleSheetsOrders from '@/components/admin/GoogleSheetsOrders';
@@ -118,7 +120,7 @@ const Admin = () => {
       {/* Admin Dashboard */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-14 gap-1">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-15 gap-1">
             <TabsTrigger value="dashboard" className="flex items-center space-x-1">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Dashboard</span>
@@ -170,6 +172,10 @@ const Admin = () => {
             <TabsTrigger value="requests" className="flex items-center space-x-1">
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">Requests</span>
+            </TabsTrigger>
+            <TabsTrigger value="passwords" className="flex items-center space-x-1">
+              <Lock className="h-4 w-4" />
+              <span className="hidden sm:inline">Passwords</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center space-x-1">
               <Settings className="h-4 w-4" />
@@ -227,6 +233,10 @@ const Admin = () => {
 
           <TabsContent value="requests">
             <FeatureRequestForm />
+          </TabsContent>
+
+          <TabsContent value="passwords">
+            <PasswordManager />
           </TabsContent>
 
           <TabsContent value="settings">

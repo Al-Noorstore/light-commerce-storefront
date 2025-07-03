@@ -16,6 +16,8 @@ interface Product {
   badge?: string;
   rating?: number;
   stock: number;
+  buyNowLink?: string;
+  buyNowText?: string;
 }
 
 const ProductManager = () => {
@@ -150,7 +152,9 @@ const ProductManager = () => {
     category: '',
     price: '',
     image: '',
-    stock: 0
+    stock: 0,
+    buyNowLink: '',
+    buyNowText: 'Buy Now'
   });
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -192,7 +196,7 @@ const ProductManager = () => {
     } as Product;
     
     setProducts([...products, product]);
-    setNewProduct({ name: '', category: '', price: '', image: '', stock: 0 });
+    setNewProduct({ name: '', category: '', price: '', image: '', stock: 0, buyNowLink: '', buyNowText: 'Buy Now' });
     setShowAddForm(false);
     toast({
       title: "Product Added",
@@ -258,15 +262,31 @@ const ProductManager = () => {
                   placeholder="PKR 1,000"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Stock</label>
-                <Input
-                  type="number"
-                  value={newProduct.stock || 0}
-                  onChange={(e) => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })}
-                  placeholder="0"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Stock</label>
+                  <Input
+                    type="number"
+                    value={newProduct.stock || 0}
+                    onChange={(e) => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Buy Now Link</label>
+                  <Input
+                    value={newProduct.buyNowLink || ''}
+                    onChange={(e) => setNewProduct({ ...newProduct, buyNowLink: e.target.value })}
+                    placeholder="https://wa.me/923222520101 or Google Form URL"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Buy Now Button Text</label>
+                  <Input
+                    value={newProduct.buyNowText || 'Buy Now'}
+                    onChange={(e) => setNewProduct({ ...newProduct, buyNowText: e.target.value })}
+                    placeholder="Buy Now, Order Now, etc."
+                  />
+                </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Product Image</label>
@@ -377,6 +397,22 @@ const ProductManager = () => {
                     type="number"
                     value={editingProduct.stock}
                     onChange={(e) => setEditingProduct({ ...editingProduct, stock: parseInt(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Buy Now Link</label>
+                  <Input
+                    value={editingProduct.buyNowLink || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, buyNowLink: e.target.value })}
+                    placeholder="https://wa.me/923222520101 or Google Form URL"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Buy Now Button Text</label>
+                  <Input
+                    value={editingProduct.buyNowText || 'Buy Now'}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, buyNowText: e.target.value })}
+                    placeholder="Buy Now, Order Now, etc."
                   />
                 </div>
               </div>
