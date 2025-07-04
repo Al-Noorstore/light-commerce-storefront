@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
+import { ProductProvider } from "@/contexts/ProductContext";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import TestAdmin from "./pages/TestAdmin";
@@ -23,21 +24,23 @@ const App = () => (
     <TooltipProvider>
       <FirebaseAuthProvider>
         <AdminProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/test-admin" element={<TestAdmin />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/delivery-policy" element={<DeliveryPolicy />} />
-              <Route path="/return-policy" element={<ReturnPolicy />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/faqs" element={<FAQs />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <ProductProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/test-admin" element={<TestAdmin />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/delivery-policy" element={<DeliveryPolicy />} />
+                <Route path="/return-policy" element={<ReturnPolicy />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/faqs" element={<FAQs />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ProductProvider>
         </AdminProvider>
       </FirebaseAuthProvider>
     </TooltipProvider>

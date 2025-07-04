@@ -4,20 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useProducts, Product } from '@/contexts/ProductContext';
 import InlineEdit from './InlineEdit';
 
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: string;
-  originalPrice?: string;
-  image: string;
-  badge?: string;
-  rating?: number;
-  buyNowLink?: string;
-  buyNowText?: string;
-}
 
 interface ProductGridProps {
   searchQuery: string;
@@ -26,146 +15,7 @@ interface ProductGridProps {
 
 const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: ProductGridProps) => {
   const { isAdminMode } = useAdmin();
-  const [products] = useState<Product[]>([
-    {
-      id: 1,
-      name: "Premium Face Cream",
-      category: "Cosmetics",
-      price: "PKR 2,500",
-      originalPrice: "PKR 3,000",
-      image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      badge: "20% OFF",
-      rating: 4.8
-    },
-    {
-      id: 2,
-      name: "Elegant Dining Set",
-      category: "Home Decor",
-      price: "PKR 15,000",
-      image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "NEW",
-      rating: 4.6
-    },
-    {
-      id: 3,
-      name: "Wireless Headphones",
-      category: "Electronics",
-      price: "PKR 8,500",
-      originalPrice: "PKR 10,000",
-      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
-      badge: "SALE",
-      rating: 4.7
-    },
-    {
-      id: 4,
-      name: "Designer Handbag",
-      category: "Accessories",
-      price: "PKR 6,000",
-      image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      rating: 4.9
-    },
-    {
-      id: 5,
-      name: "Kitchen Cookware Set",
-      category: "Kitchenware",
-      price: "PKR 12,000",
-      originalPrice: "PKR 14,000",
-      image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "POPULAR",
-      rating: 4.5
-    },
-    {
-      id: 6,
-      name: "Casual T-Shirt",
-      category: "Clothes",
-      price: "PKR 1,800",
-      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
-      rating: 4.4
-    },
-    {
-      id: 7,
-      name: "Moisturizing Serum",
-      category: "Cosmetics",
-      price: "PKR 3,200",
-      image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      badge: "TRENDING",
-      rating: 4.8
-    },
-    {
-      id: 8,
-      name: "Smart Watch",
-      category: "Electronics",
-      price: "PKR 18,000",
-      originalPrice: "PKR 22,000",
-      image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "HOT",
-      rating: 4.6
-    },
-    {
-      id: 9,
-      name: "Formal Shoes",
-      category: "Clothes",
-      price: "PKR 7,500",
-      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
-      rating: 4.3
-    },
-    {
-      id: 10,
-      name: "Yoga Mat",
-      category: "Sports & Fitness",
-      price: "PKR 2,200",
-      originalPrice: "PKR 2,800",
-      image: "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=400&h=400&fit=crop",
-      badge: "FITNESS",
-      rating: 4.7
-    },
-    {
-      id: 11,
-      name: "Resistance Bands Set",
-      category: "Sports & Fitness",
-      price: "PKR 1,500",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop",
-      badge: "NEW",
-      rating: 4.5
-    },
-    {
-      id: 12,
-      name: "Protein Shaker Bottle",
-      category: "Sports & Fitness",
-      price: "PKR 800",
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop",
-      rating: 4.4
-    },
-    {
-      id: 13,
-      name: "Running Sneakers",
-      category: "Shoes",
-      price: "PKR 5,500",
-      originalPrice: "PKR 7,000",
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
-      badge: "SPORT",
-      rating: 4.6
-    },
-    {
-      id: 14,
-      name: "Formal Leather Shoes",
-      category: "Shoes",
-      price: "PKR 8,000",
-      image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop",
-      badge: "PREMIUM",
-      rating: 4.7
-    },
-    {
-      id: 15,
-      name: "Casual Loafers",
-      category: "Shoes",
-      price: "PKR 4,200",
-      originalPrice: "PKR 5,000",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop",
-      badge: "COMFORT",
-      rating: 4.5
-    }
-  ]);
+  const { products, updateProduct, deleteProduct } = useProducts();
 
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [visibleProducts, setVisibleProducts] = useState(6);
@@ -193,14 +43,15 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
   }, [searchQuery, selectedCategory, products]);
 
   const handleProductSave = (productId: number, field: string, value: string) => {
-    console.log(`Saving product ${productId}.${field}:`, value);
-    // Here you would implement the actual save logic to your backend
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      updateProduct(productId, { ...product, [field]: value });
+    }
   };
 
   const handleDeleteProduct = (productId: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
-      console.log(`Deleting product ${productId}`);
-      // Here you would implement the actual delete logic
+      deleteProduct(productId);
     }
   };
 
