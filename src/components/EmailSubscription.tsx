@@ -17,7 +17,7 @@ const EmailSubscription = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch('/functions/v1/send-subscription-email', {
+      const response = await fetch('https://osrolxzxnurzisysvdvu.supabase.co/functions/v1/send-subscription-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
