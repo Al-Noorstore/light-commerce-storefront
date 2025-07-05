@@ -21,23 +21,11 @@ import {
   Lock
 } from 'lucide-react';
 import AdminAuth from '@/components/admin/AdminAuth';
-import RealTimeDashboard from '@/components/admin/RealTimeDashboard';
 import ProductManager from '@/components/admin/ProductManager';
-import CategoryManager from '@/components/admin/CategoryManager';
-import OrdersManager from '@/components/admin/OrdersManager';
-import EnhancedBulkUpload from '@/components/admin/EnhancedBulkUpload';
-import StockManager from '@/components/admin/StockManager';
-import AdminRoleManager from '@/components/admin/AdminRoleManager';
-import NotificationManager from '@/components/admin/NotificationManager';
-import WebsiteEditor from '@/components/admin/WebsiteEditor';
-import QuickActions from '@/components/admin/QuickActions';
-import FeatureRequestForm from '@/components/admin/FeatureRequestForm';
-import SettingsManager from '@/components/admin/SettingsManager';
 import PasswordManager from '@/components/admin/PasswordManager';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
-import GoogleSheetsOrders from '@/components/admin/GoogleSheetsOrders';
-import IntegratedStockManager from '@/components/admin/IntegratedStockManager';
+import { useProducts } from '@/contexts/ProductContext';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -45,6 +33,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { currentUser, logout } = useFirebaseAuth();
+  const { products } = useProducts();
 
   useEffect(() => {
     // Check if user is authenticated and is the authorized admin
@@ -287,19 +276,75 @@ const Admin = () => {
           </div>
 
           <TabsContent value="dashboard">
-            <RealTimeDashboard />
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-sm font-medium text-gray-500">Total Products</h3>
+                  <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-sm font-medium text-gray-500">Categories</h3>
+                  <p className="text-2xl font-bold text-gray-900">{new Set(products.map(p => p.category)).size}</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-sm font-medium text-gray-500">Low Stock</h3>
+                  <p className="text-2xl font-bold text-orange-600">{products.filter(p => (p.stock || 0) < 10).length}</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-sm font-medium text-gray-500">Admin Status</h3>
+                  <p className="text-2xl font-bold text-green-600">Online</p>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">Admin Dashboard</h3>
+                <p className="text-gray-600">Welcome to your admin panel. Use the navigation above to manage products, change passwords, and configure settings.</p>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="quick">
-            <QuickActions />
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+              <p className="text-gray-600 mb-4">Perform quick administrative tasks.</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Button className="h-20 flex flex-col items-center justify-center">
+                  <Package className="h-6 w-6 mb-2" />
+                  <span>Add Product</span>
+                </Button>
+                <Button className="h-20 flex flex-col items-center justify-center">
+                  <TrendingUp className="h-6 w-6 mb-2" />
+                  <span>View Reports</span>
+                </Button>
+                <Button className="h-20 flex flex-col items-center justify-center">
+                  <Settings className="h-6 w-6 mb-2" />
+                  <span>Settings</span>
+                </Button>
+                <Button className="h-20 flex flex-col items-center justify-center">
+                  <Users className="h-6 w-6 mb-2" />
+                  <span>Manage Users</span>
+                </Button>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="integrated">
-            <IntegratedStockManager />
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Live Data Integration</h3>
+              <p className="text-gray-600 mb-4">Real-time data synchronization features.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="sheets">
-            <GoogleSheetsOrders />
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Google Sheets Integration</h3>
+              <p className="text-gray-600 mb-4">Manage orders and data through Google Sheets.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="products">
@@ -307,43 +352,123 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="stock">
-            <StockManager />
-          </TabsContent>
-
-          <TabsContent value="upload">
-            <EnhancedBulkUpload />
-          </TabsContent>
-
-          <TabsContent value="orders">
-            <OrdersManager />
-          </TabsContent>
-
-          <TabsContent value="categories">
-            <CategoryManager />
-          </TabsContent>
-
-          <TabsContent value="editor">
-            <WebsiteEditor />
-          </TabsContent>
-
-          <TabsContent value="admins">
-            <AdminRoleManager />
-          </TabsContent>
-
-          <TabsContent value="notifications">
-            <NotificationManager />
-          </TabsContent>
-
-          <TabsContent value="requests">
-            <FeatureRequestForm />
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">Stock Management</h3>
+                <div className="space-y-4">
+                  <h4 className="text-md font-medium text-orange-600">Low Stock Products</h4>
+                  {products.filter(p => (p.stock || 0) < 10).length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {products.filter(p => (p.stock || 0) < 10).map((product) => (
+                        <div key={product.id} className="border border-orange-200 p-4 rounded-lg">
+                          <h5 className="font-semibold">{product.name}</h5>
+                          <p className="text-sm text-gray-600">{product.category}</p>
+                          <div className="flex justify-between items-center mt-2">
+                            <span className="text-sm font-medium">Stock: {product.stock || 0}</span>
+                            <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
+                              Low Stock
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">All products are well stocked!</p>
+                  )}
+                </div>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="passwords">
             <PasswordManager />
           </TabsContent>
 
+          <TabsContent value="upload">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Bulk Upload</h3>
+              <p className="text-gray-600 mb-4">Upload multiple products at once using CSV or Excel files.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Orders Management</h3>
+              <p className="text-gray-600 mb-4">Manage customer orders and track deliveries.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="categories">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Category Management</h3>
+              <p className="text-gray-600 mb-4">Organize and manage product categories.</p>
+              <div className="space-y-2">
+                <h4 className="font-medium">Current Categories:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(new Set(products.map(p => p.category))).map((category, index) => (
+                    <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                      {category}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="editor">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Website Editor</h3>
+              <p className="text-gray-600 mb-4">Customize your website appearance and content.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="admins">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Admin Role Management</h3>
+              <p className="text-gray-600 mb-4">Manage admin users and their permissions.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Notification Management</h3>
+              <p className="text-gray-600 mb-4">Configure alerts and notifications.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="requests">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Feature Requests</h3>
+              <p className="text-gray-600 mb-4">Submit and manage feature requests.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
+          </TabsContent>
+
           <TabsContent value="settings">
-            <SettingsManager />
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Settings Management</h3>
+              <p className="text-gray-600 mb-4">Configure system settings and preferences.</p>
+              <Button disabled className="opacity-50">
+                Feature Available in Full Version
+              </Button>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

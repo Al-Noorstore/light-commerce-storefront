@@ -62,27 +62,36 @@ const PasswordManager = () => {
         return;
       }
 
-      // Update Firebase Auth password
+      // Update Firebase Auth password if user is authenticated
       if (currentUser) {
         await updatePassword(currentUser, newLoginPassword);
+        toast({
+          title: "Login Password Updated",
+          description: "Your Firebase login password has been successfully changed.",
+        });
+      } else {
+        // Update stored password for local authentication
+        localStorage.setItem('adminPassword', newLoginPassword);
+        toast({
+          title: "Login Password Updated",
+          description: "Your login password has been successfully changed.",
+        });
       }
-
-      toast({
-        title: "Login Password Updated",
-        description: "Your login password has been successfully changed.",
-      });
 
       // Clear form
       setCurrentLoginPassword('');
       setNewLoginPassword('');
       setConfirmLoginPassword('');
     } catch (error: any) {
+      console.error('Password update error:', error);
       let errorMessage = "Failed to update password. Please try again.";
       
       if (error.code === 'auth/requires-recent-login') {
         errorMessage = "Please log out and log back in before changing your password.";
       } else if (error.code === 'auth/weak-password') {
         errorMessage = "Password is too weak. Please choose a stronger password.";
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection and try again.";
       }
 
       toast({
@@ -101,7 +110,8 @@ const PasswordManager = () => {
 
     try {
       // Validate current edit password
-      if (currentEditPassword !== '548413') {
+      const storedEditPassword = localStorage.getItem('editPassword') || '548413';
+      if (currentEditPassword !== storedEditPassword) {
         toast({
           title: "Invalid Current Edit Password",
           description: "Please enter your current edit password correctly.",
@@ -132,9 +142,8 @@ const PasswordManager = () => {
         return;
       }
 
-      // Here you would save to Firestore or your backend
-      // For now, we'll just show success
-      console.log('New edit password:', newEditPassword);
+      // Save new edit password to localStorage
+      localStorage.setItem('editPassword', newEditPassword);
 
       toast({
         title: "Edit Password Updated",
@@ -146,6 +155,7 @@ const PasswordManager = () => {
       setNewEditPassword('');
       setConfirmEditPassword('');
     } catch (error) {
+      console.error('Edit password update error:', error);
       toast({
         title: "Password Update Failed",
         description: "Failed to update edit password. Please try again.",
@@ -281,7 +291,7 @@ const PasswordManager = () => {
                   show={showEditPasswords}
                   onToggleShow={() => setShowEditPasswords(!showEditPasswords)}
                 />
-                <p className="text-xs text-gray-500 mt-1">Current: 548413</p>
+                <p className="text-xs text-gray-500 mt-1">Current: {localStorage.getItem('editPassword') || '548413'}</p>
               </div>
 
               <div>
