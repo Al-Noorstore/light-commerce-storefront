@@ -56,9 +56,9 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
   };
 
   const handleBuyNow = (product: Product) => {
-    if (product.buyNowLink) {
+    if (product.buy_now_link) {
       // Use custom buy now link if provided
-      window.open(product.buyNowLink, '_blank');
+      window.open(product.buy_now_link, '_blank');
     } else {
       // Fallback to default Google Form URL with product name pre-filled
       const formUrl = `https://forms.gle/98wXZbtzzLcH7GFSA?usp=pp_url&entry.1234567890=${encodeURIComponent(product.name)}&entry.0987654321=${encodeURIComponent(product.price)}`;
@@ -170,10 +170,10 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
                     onSave={(value) => handleProductSave(product.id, 'price', value)}
                     className="text-lg font-bold text-gray-800"
                   />
-                  {product.originalPrice && (
+                  {product.original_price && (
                     <InlineEdit
-                      value={product.originalPrice}
-                      onSave={(value) => handleProductSave(product.id, 'originalPrice', value)}
+                      value={product.original_price}
+                      onSave={(value) => handleProductSave(product.id, 'original_price', value)}
                       className="text-sm text-gray-500 line-through"
                     />
                   )}
@@ -185,7 +185,7 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
                   className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 group"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2 group-hover:animate-bounce" />
-                  {product.buyNowText || 'Buy Now'}
+                  {product.buy_now_text || 'Buy Now'}
                 </Button>
               </div>
             </CardContent>

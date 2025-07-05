@@ -19,8 +19,8 @@ const ProductManager = () => {
     price: '',
     image: '',
     stock: 0,
-    buyNowLink: '',
-    buyNowText: 'Buy Now'
+    buy_now_link: '',
+    buy_now_text: 'Buy Now'
   });
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -28,28 +28,44 @@ const ProductManager = () => {
     setEditingProduct({ ...product });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (editingProduct) {
-      updateProduct(editingProduct.id, editingProduct);
-      setEditingProduct(null);
-      toast({
-        title: "Product Updated",
-        description: "Product has been successfully updated.",
-      });
+      try {
+        await updateProduct(editingProduct.id, editingProduct);
+        setEditingProduct(null);
+        toast({
+          title: "Product Updated",
+          description: "Product has been successfully updated.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update product. Please try again.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
-      deleteProduct(id);
-      toast({
-        title: "Product Deleted",
-        description: "Product has been successfully deleted.",
-      });
+      try {
+        await deleteProduct(id);
+        toast({
+          title: "Product Deleted",
+          description: "Product has been successfully deleted.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete product. Please try again.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
-  const handleAddProduct = () => {
+  const handleAddProduct = async () => {
     if (!newProduct.name || !newProduct.category || !newProduct.price || !newProduct.image) {
       toast({
         title: "Missing Information",
@@ -59,23 +75,31 @@ const ProductManager = () => {
       return;
     }
 
-    const product = {
-      name: newProduct.name,
-      category: newProduct.category,
-      price: newProduct.price,
-      image: newProduct.image,
-      stock: newProduct.stock || 0,
-      buyNowLink: newProduct.buyNowLink,
-      buyNowText: newProduct.buyNowText || 'Buy Now'
-    };
-    
-    addProduct(product);
-    setNewProduct({ name: '', category: '', price: '', image: '', stock: 0, buyNowLink: '', buyNowText: 'Buy Now' });
-    setShowAddForm(false);
-    toast({
-      title: "Product Added",
-      description: "New product has been successfully added.",
-    });
+    try {
+      const product = {
+        name: newProduct.name,
+        category: newProduct.category,
+        price: newProduct.price,
+        image: newProduct.image,
+        stock: newProduct.stock || 0,
+        buy_now_link: newProduct.buy_now_link,
+        buy_now_text: newProduct.buy_now_text || 'Buy Now'
+      } as Omit<Product, 'id'>;
+      
+      await addProduct(product);
+      setNewProduct({ name: '', category: '', price: '', image: '', stock: 0, buy_now_link: '', buy_now_text: 'Buy Now' });
+      setShowAddForm(false);
+      toast({
+        title: "Product Added",
+        description: "New product has been successfully added.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add product. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleImageUpload = (productId?: number) => {
@@ -148,16 +172,16 @@ const ProductManager = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Buy Now Link</label>
                   <Input
-                    value={newProduct.buyNowLink || ''}
-                    onChange={(e) => setNewProduct({ ...newProduct, buyNowLink: e.target.value })}
+                    value={newProduct.buy_now_link || ''}
+                    onChange={(e) => setNewProduct({ ...newProduct, buy_now_link: e.target.value })}
                     placeholder="https://wa.me/923222520101 or Google Form URL"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Buy Now Button Text</label>
                   <Input
-                    value={newProduct.buyNowText || 'Buy Now'}
-                    onChange={(e) => setNewProduct({ ...newProduct, buyNowText: e.target.value })}
+                    value={newProduct.buy_now_text || 'Buy Now'}
+                    onChange={(e) => setNewProduct({ ...newProduct, buy_now_text: e.target.value })}
                     placeholder="Buy Now, Order Now, etc."
                   />
                 </div>
@@ -219,8 +243,8 @@ const ProductManager = () => {
                 <h3 className="font-semibold text-gray-800">{product.name}</h3>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg font-bold text-gray-800">{product.price}</span>
-                  {product.originalPrice && (
-                    <span className="text-sm text-gray-500 line-through">{product.originalPrice}</span>
+                  {product.original_price && (
+                    <span className="text-sm text-gray-500 line-through">{product.original_price}</span>
                   )}
                 </div>
                 <div className="flex justify-between items-center">
@@ -276,16 +300,16 @@ const ProductManager = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Buy Now Link</label>
                   <Input
-                    value={editingProduct.buyNowLink || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, buyNowLink: e.target.value })}
+                    value={editingProduct.buy_now_link || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, buy_now_link: e.target.value })}
                     placeholder="https://wa.me/923222520101 or Google Form URL"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Buy Now Button Text</label>
                   <Input
-                    value={editingProduct.buyNowText || 'Buy Now'}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, buyNowText: e.target.value })}
+                    value={editingProduct.buy_now_text || 'Buy Now'}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, buy_now_text: e.target.value })}
                     placeholder="Buy Now, Order Now, etc."
                   />
                 </div>
