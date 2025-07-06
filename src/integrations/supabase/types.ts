@@ -9,6 +9,60 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      form_submissions: {
+        Row: {
+          additional_data: Json | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          delivery_address: string | null
+          delivery_city: string | null
+          delivery_postal_code: string | null
+          form_name: string
+          form_type: string
+          id: string
+          notes: string | null
+          order_details: Json | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          additional_data?: Json | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_city?: string | null
+          delivery_postal_code?: string | null
+          form_name: string
+          form_type: string
+          id?: string
+          notes?: string | null
+          order_details?: Json | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          additional_data?: Json | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: string | null
+          delivery_city?: string | null
+          delivery_postal_code?: string | null
+          form_name?: string
+          form_type?: string
+          id?: string
+          notes?: string | null
+          order_details?: Json | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           badge: string | null

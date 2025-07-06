@@ -23,6 +23,7 @@ import {
 import AdminAuth from '@/components/admin/AdminAuth';
 import ProductManager from '@/components/admin/ProductManager';
 import PasswordManager from '@/components/admin/PasswordManager';
+import FormManager from '@/components/admin/FormManager';
 import { useToast } from '@/hooks/use-toast';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useProducts } from '@/contexts/ProductContext';
@@ -209,6 +210,15 @@ const Admin = () => {
                 >
                   <TrendingUp className="h-4 w-4" />
                   <span>Sheets</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('forms')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'forms' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  <span>Forms</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('notifications')}
@@ -469,6 +479,10 @@ const Admin = () => {
                 Feature Available in Full Version
               </Button>
             </div>
+          </TabsContent>
+
+          <TabsContent value="forms">
+            <FormManager />
           </TabsContent>
         </Tabs>
       </div>
