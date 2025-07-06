@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface FormSubmission {
   id: string;
@@ -25,6 +26,8 @@ interface FormSubmissionContextType {
   fetchSubmissions: () => Promise<void>;
   updateSubmissionStatus: (id: string, status: string, notes?: string) => Promise<void>;
   deleteSubmission: (id: string) => Promise<void>;
+  newSubmissionsCount: number;
+  markNotificationsRead: () => void;
 }
 
 const FormSubmissionContext = createContext<FormSubmissionContextType | undefined>(undefined);
@@ -32,6 +35,8 @@ const FormSubmissionContext = createContext<FormSubmissionContextType | undefine
 export const FormSubmissionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newSubmissionsCount, setNewSubmissionsCount] = useState(0);
+  const { toast } = useToast();
 
   const fetchSubmissions = async () => {
     try {
@@ -101,9 +106,75 @@ export const FormSubmissionProvider: React.FC<{ children: ReactNode }> = ({ chil
     }
   };
 
+  const markNotificationsRead = () => {
+    setNewSubmissionsCount(0);
+  };
+
   useEffect(() => {
     fetchSubmissions();
-  }, []);
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('form_submissions')
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'form_submissions' 
+        }, 
+        (payload) => {
+          const newSubmission = payload.new as FormSubmission;
+          setSubmissions(prev => [newSubmission, ...prev]);
+          setNewSubmissionsCount(prev => prev + 1);
+          
+          // Show notification
+          toast({
+            title: "New Form Submission",
+            description: `New ${newSubmission.form_type} form submission from ${newSubmission.customer_name || 'Unknown'}`,
+          });
+
+          // Browser notification if permission granted
+          if (Notification.permission === 'granted') {
+            new Notification('New Form Submission', {
+              body: `${newSubmission.form_type} form from ${newSubmission.customer_name || 'Unknown'}`,
+              icon: '/favicon.ico'
+            });
+          }
+        }
+      )
+      .on('postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public', 
+          table: 'form_submissions'
+        },
+        (payload) => {
+          const updatedSubmission = payload.new as FormSubmission;
+          setSubmissions(prev => prev.map(s => s.id === updatedSubmission.id ? updatedSubmission : s));
+        }
+      )
+      .on('postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'form_submissions'
+        },
+        (payload) => {
+          const deletedId = payload.old.id;
+          setSubmissions(prev => prev.filter(s => s.id !== deletedId));
+        }
+      )
+      .subscribe();
+
+    // Request notification permission
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [toast]);
 
   return (
     <FormSubmissionContext.Provider value={{
@@ -111,7 +182,9 @@ export const FormSubmissionProvider: React.FC<{ children: ReactNode }> = ({ chil
       loading,
       fetchSubmissions,
       updateSubmissionStatus,
-      deleteSubmission
+      deleteSubmission,
+      newSubmissionsCount,
+      markNotificationsRead
     }}>
       {children}
     </FormSubmissionContext.Provider>
