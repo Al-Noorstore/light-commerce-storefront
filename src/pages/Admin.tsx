@@ -33,17 +33,17 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { currentUser, logout } = useFirebaseAuth();
   const { products } = useProducts();
 
   useEffect(() => {
-    // Check if user is authenticated and is the authorized admin
-    if (currentUser && currentUser.email === 'alnoormall.pk@gmail.com') {
+    // Check if user is authenticated using localStorage
+    const adminEmail = localStorage.getItem('adminEmail');
+    if (adminEmail === 'alnoormall.pk@gmail.com') {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
     }
-  }, [currentUser]);
+  }, []);
 
   const handleLogin = (email: string) => {
     if (email === 'alnoormall.pk@gmail.com') {
@@ -51,22 +51,14 @@ const Admin = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      setIsAuthenticated(false);
-      navigate('/');
-      toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out",
-      });
-    } catch (error) {
-      toast({
-        title: "Logout Error",
-        description: "There was an error logging out. Please try again.",
-        variant: "destructive"
-      });
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('adminEmail');
+    setIsAuthenticated(false);
+    navigate('/');
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out",
+    });
   };
 
   if (!isAuthenticated) {
@@ -90,7 +82,7 @@ const Admin = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{currentUser?.email}</p>
+                <p className="text-sm font-medium text-gray-900">alnoormall.pk@gmail.com</p>
                 <p className="text-xs text-gray-500">Super Admin</p>
               </div>
               <Button
