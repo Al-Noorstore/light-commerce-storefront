@@ -10,7 +10,7 @@ const AdminLogin = () => {
   const { setIsAdmin } = useAdmin();
 
   const handleLogin = () => {
-    if (email === 'alnoormall.pk@gmail.com' && password === 'admin123') {
+    if (email === 'alnoormall.pk@gmail.com' && password === '548413') {
       localStorage.setItem('adminEmail', email);
       setIsAdmin(true);
       alert('Admin login successful!');
