@@ -20,12 +20,12 @@ import {
   Edit3,
   Lock
 } from 'lucide-react';
-import AdminAuth from '@/components/admin/AdminAuth';
+import AdminLogin from '@/components/AdminLogin';
 import ProductManager from '@/components/admin/ProductManager';
 import PasswordManager from '@/components/admin/PasswordManager';
 import FormManager from '@/components/admin/FormManager';
 import { useToast } from '@/hooks/use-toast';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useProducts } from '@/contexts/ProductContext';
 
 const Admin = () => {
@@ -34,16 +34,13 @@ const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { products } = useProducts();
+  const { user, loading, signOut, isAdmin } = useAuth();
 
   useEffect(() => {
-    // Check if user is authenticated using localStorage
-    const adminEmail = localStorage.getItem('adminEmail');
-    if (adminEmail === 'alnoormall.pk@gmail.com') {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
+    if (!loading) {
+      setIsAuthenticated(isAdmin);
     }
-  }, []);
+  }, [loading, isAdmin]);
 
   const handleLogin = (email: string) => {
     if (email === 'alnoormall.pk@gmail.com') {
@@ -51,18 +48,45 @@ const Admin = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminEmail');
-    setIsAuthenticated(false);
-    navigate('/');
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out",
-    });
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setIsAuthenticated(false);
+      navigate('/auth');
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out",
+      });
+    } catch (error) {
+      toast({
+        title: "Logout Error",
+        description: "There was an error logging out. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-primary border-t-transparent"></div>
+          <p className="mt-2">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
-    return <AdminAuth onLogin={handleLogin} />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-muted-foreground">You need admin privileges to access this page.</p>
+          <Button onClick={() => navigate('/auth')}>Go to Login</Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -82,7 +106,7 @@ const Admin = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">alnoormall.pk@gmail.com</p>
+                <p className="text-sm font-medium text-gray-900">{user?.email}</p>
                 <p className="text-xs text-gray-500">Super Admin</p>
               </div>
               <Button

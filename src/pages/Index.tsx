@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ProductGrid from "@/components/ProductGrid";
 import HeroBanner from "@/components/HeroBanner";
@@ -12,6 +13,7 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
 
   const categories = [
     "All Products", "Cosmetics", "Clothes", "Kitchenware", 
@@ -45,6 +47,16 @@ const Index = () => {
               <Link to="/" className="text-gray-700 hover:text-orange-600 transition-colors">Home</Link>
               <Link to="/contact" className="text-gray-700 hover:text-orange-600 transition-colors">Contact</Link>
               <Link to="/faqs" className="text-gray-700 hover:text-orange-600 transition-colors">FAQs</Link>
+              {user ? (
+                isAdmin && (
+                  <Link to="/admin" className="text-gray-700 hover:text-orange-600 transition-colors">Admin</Link>
+                )
+              ) : (
+                <Link to="/auth" className="flex items-center gap-2 text-gray-700 hover:text-orange-600 transition-colors">
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </Link>
+              )}
             </nav>
             
             {/* Mobile Menu Button */}
