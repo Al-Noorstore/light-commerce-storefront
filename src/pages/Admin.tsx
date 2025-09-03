@@ -24,6 +24,7 @@ import AdminLogin from '@/components/AdminLogin';
 import ProductManager from '@/components/admin/ProductManager';
 import PasswordManager from '@/components/admin/PasswordManager';
 import FormManager from '@/components/admin/FormManager';
+import ModernAdminDashboard from '@/components/admin/ModernAdminDashboard';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useProducts } from '@/contexts/ProductContext';
@@ -302,30 +303,7 @@ const Admin = () => {
           </div>
 
           <TabsContent value="dashboard">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow">
-                  <h3 className="text-sm font-medium text-gray-500">Total Products</h3>
-                  <p className="text-2xl font-bold text-gray-900">{products.length}</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow">
-                  <h3 className="text-sm font-medium text-gray-500">Categories</h3>
-                  <p className="text-2xl font-bold text-gray-900">{new Set(products.map(p => p.category)).size}</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow">
-                  <h3 className="text-sm font-medium text-gray-500">Low Stock</h3>
-                  <p className="text-2xl font-bold text-orange-600">{products.filter(p => (p.stock || 0) < 10).length}</p>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow">
-                  <h3 className="text-sm font-medium text-gray-500">Admin Status</h3>
-                  <p className="text-2xl font-bold text-green-600">Online</p>
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow">
-                <h3 className="text-lg font-semibold mb-4">Admin Dashboard</h3>
-                <p className="text-gray-600">Welcome to your admin panel. Use the navigation above to manage products, change passwords, and configure settings.</p>
-              </div>
-            </div>
+            <ModernAdminDashboard />
           </TabsContent>
 
           <TabsContent value="quick">

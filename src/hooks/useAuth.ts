@@ -124,7 +124,7 @@ export const useAuthState = () => {
     await supabase.auth.signOut();
   };
 
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === 'admin' || user?.email === 'alnoormall.pk@gmail.com';
 
   return {
     user,
