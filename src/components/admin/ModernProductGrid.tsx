@@ -22,6 +22,8 @@ interface Product {
   on_sale: boolean;
   best_seller: boolean;
   deleted: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface ModernProductGridProps {

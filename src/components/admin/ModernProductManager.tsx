@@ -125,8 +125,21 @@ export default function ModernProductManager() {
       }
 
       const productData = {
-        ...formData,
-        features: Array.isArray(formData.features) ? formData.features : []
+        name: formData.name!,
+        category: formData.category!,
+        description: formData.description || '',
+        image_url: formData.image_url!,
+        price: formData.price || 0,
+        currency: formData.currency || 'PKR',
+        original_price: formData.original_price,
+        quantity: formData.quantity || 100,
+        features: Array.isArray(formData.features) ? formData.features : [],
+        rating: formData.rating || 4.5,
+        reviews_count: formData.reviews_count || 0,
+        on_sale: formData.on_sale || false,
+        best_seller: formData.best_seller || false,
+        shipping: formData.shipping || { type: 'free' },
+        deleted: false
       };
 
       if (editingProduct) {
