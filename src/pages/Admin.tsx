@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   BarChart3, 
   Package, 
@@ -12,47 +13,57 @@ import {
   LogOut,
   Bell,
   Shield,
-  Palette,
   MessageSquare,
   TrendingUp,
   Boxes,
   Zap,
   Edit3,
-  Lock
+  Lock,
+  Store,
+  DollarSign,
+  AlertTriangle
 } from 'lucide-react';
-import AdminLogin from '@/components/AdminLogin';
-import ProductManager from '@/components/admin/ProductManager';
+import ModernProductManager from '@/components/admin/ModernProductManager';
 import PasswordManager from '@/components/admin/PasswordManager';
 import FormManager from '@/components/admin/FormManager';
-import ModernAdminDashboard from '@/components/admin/ModernAdminDashboard';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { useProducts } from '@/contexts/ProductContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { products } = useProducts();
-  const { user, loading, signOut, isAdmin } = useAuth();
+  const { user, loading: authLoading, signOut, isAdmin } = useAuth();
 
   useEffect(() => {
-    if (!loading) {
-      setIsAuthenticated(isAdmin);
-    }
-  }, [loading, isAdmin]);
+    const loadProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('admin_products')
+          .select('*')
+          .eq('deleted', false);
+        
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleLogin = (email: string) => {
-    if (email === 'alnoormall.pk@gmail.com') {
-      setIsAuthenticated(true);
+    if (isAdmin) {
+      loadProducts();
     }
-  };
+  }, [isAdmin]);
 
   const handleLogout = async () => {
     try {
       await signOut();
-      setIsAuthenticated(false);
+      
       navigate('/auth');
       toast({
         title: "Logged Out",
@@ -67,57 +78,80 @@ const Admin = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-primary border-t-transparent"></div>
-          <p className="mt-2">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">You need admin privileges to access this page.</p>
-          <Button onClick={() => navigate('/auth')}>Go to Login</Button>
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+          <p className="text-muted-foreground">Loading admin panel...</p>
         </div>
       </div>
     );
   }
 
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div className="text-center space-y-6">
+          <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+            <Shield className="w-8 h-8 text-destructive" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-gray-900">Access Denied</h1>
+            <p className="text-muted-foreground max-w-md">
+              You need admin privileges to access this panel. Please sign up with the admin email: alnoormall.pk@gmail.com
+            </p>
+          </div>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={() => navigate('/auth')} variant="default">
+              Go to Login
+            </Button>
+            <Button onClick={() => navigate('/')} variant="outline">
+              Back to Store
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const statsData = {
+    totalProducts: products.length,
+    categories: new Set(products.map(p => p.category)).size,
+    lowStock: products.filter(p => (p.quantity || 0) < 10).length,
+    revenue: products.reduce((sum, p) => sum + (Number(p.price) || 0), 0)
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Admin Header */}
-      <header className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Modern Admin Header */}
+      <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-lg">AN</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 rounded-xl flex items-center justify-center shadow-lg">
+                <Store className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Al-Noor Admin Panel</h1>
-                <p className="text-sm text-gray-600">Complete Real-Time Store Management</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Al-Noor Admin
+                </h1>
+                <p className="text-sm text-gray-600">Store Management Dashboard</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-right">
+              <div className="hidden md:block text-right">
                 <p className="text-sm font-medium text-gray-900">{user?.email}</p>
-                <p className="text-xs text-gray-500">Super Admin</p>
+                <p className="text-xs text-emerald-600 font-medium">Super Admin</p>
               </div>
               <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </div>
@@ -303,7 +337,100 @@ const Admin = () => {
           </div>
 
           <TabsContent value="dashboard">
-            <ModernAdminDashboard />
+            <div className="space-y-6">
+              {/* Modern Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-blue-100">Total Products</CardTitle>
+                    <Package className="h-5 w-5 text-blue-200" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{statsData.totalProducts}</div>
+                    <p className="text-xs text-blue-100 mt-1">Active products</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-emerald-100">Categories</CardTitle>
+                    <Boxes className="h-5 w-5 text-emerald-200" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{statsData.categories}</div>
+                    <p className="text-xs text-emerald-100 mt-1">Product categories</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 shadow-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-orange-100">Low Stock</CardTitle>
+                    <AlertTriangle className="h-5 w-5 text-orange-200" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">{statsData.lowStock}</div>
+                    <p className="text-xs text-orange-100 mt-1">Need restocking</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-purple-100">Total Value</CardTitle>
+                    <DollarSign className="h-5 w-5 text-purple-200" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold">Rs.{statsData.revenue.toLocaleString()}</div>
+                    <p className="text-xs text-purple-100 mt-1">Inventory value</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Welcome Card */}
+              <Card className="bg-gradient-to-r from-gray-50 to-white border-gray-200 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-xl text-gray-800">Welcome to Al-Noor Admin Dashboard</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-600">
+                    Manage your store efficiently with real-time product management, inventory tracking, and administrative tools.
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-blue-50 hover:border-blue-200"
+                      onClick={() => setActiveTab('products')}
+                    >
+                      <Package className="h-6 w-6 text-blue-600" />
+                      <span className="text-sm">Manage Products</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-green-50 hover:border-green-200"
+                      onClick={() => setActiveTab('stock')}
+                    >
+                      <Boxes className="h-6 w-6 text-green-600" />
+                      <span className="text-sm">Check Stock</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-purple-50 hover:border-purple-200"
+                      onClick={() => setActiveTab('forms')}
+                    >
+                      <MessageSquare className="h-6 w-6 text-purple-600" />
+                      <span className="text-sm">View Orders</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center space-y-2 hover:bg-orange-50 hover:border-orange-200"
+                      onClick={() => setActiveTab('settings')}
+                    >
+                      <Settings className="h-6 w-6 text-orange-600" />
+                      <span className="text-sm">Settings</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="quick">
@@ -352,7 +479,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="products">
-            <ProductManager />
+            <ModernProductManager />
           </TabsContent>
 
           <TabsContent value="stock">

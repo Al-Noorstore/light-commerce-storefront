@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_products: {
+        Row: {
+          best_seller: boolean | null
+          category: string
+          created_at: string | null
+          currency: string | null
+          data_ai_hint: string | null
+          deleted: boolean | null
+          description: string
+          features: string[] | null
+          id: string
+          image_url: string
+          name: string
+          on_sale: boolean | null
+          original_price: number | null
+          price: number
+          quantity: number | null
+          rating: number | null
+          reviews_count: number | null
+          shipping: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          best_seller?: boolean | null
+          category: string
+          created_at?: string | null
+          currency?: string | null
+          data_ai_hint?: string | null
+          deleted?: boolean | null
+          description: string
+          features?: string[] | null
+          id?: string
+          image_url: string
+          name: string
+          on_sale?: boolean | null
+          original_price?: number | null
+          price: number
+          quantity?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          shipping?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          best_seller?: boolean | null
+          category?: string
+          created_at?: string | null
+          currency?: string | null
+          data_ai_hint?: string | null
+          deleted?: boolean | null
+          description?: string
+          features?: string[] | null
+          id?: string
+          image_url?: string
+          name?: string
+          on_sale?: boolean | null
+          original_price?: number | null
+          price?: number
+          quantity?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          shipping?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       form_submissions: {
         Row: {
           additional_data: Json | null
