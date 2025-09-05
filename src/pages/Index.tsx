@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import ProductGrid from "@/components/ProductGrid";
 import HeroBanner from "@/components/HeroBanner";
-import EmailSubscription from "@/components/EmailSubscription";
+import SeasonalBanner from "@/components/SeasonalBanner";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,8 +94,8 @@ const Index = () => {
       {/* Hero Banner */}
       <HeroBanner />
 
-      {/* Email Subscription */}
-      <EmailSubscription />
+      {/* Seasonal Banner */}
+      <SeasonalBanner />
 
       {/* Our Products Section */}
       <section id="products-section" className="py-12 px-4">
