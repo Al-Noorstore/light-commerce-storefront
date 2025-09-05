@@ -5,7 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useProducts, Product } from '@/contexts/ProductContext';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/hooks/use-toast';
 import InlineEdit from './InlineEdit';
+import ProductDetailModal from './ProductDetailModal';
+import CheckoutModal from './CheckoutModal';
 
 
 interface ProductGridProps {
@@ -16,9 +20,15 @@ interface ProductGridProps {
 const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: ProductGridProps) => {
   const { isAdminMode } = useAdmin();
   const { products, updateProduct, deleteProduct } = useProducts();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [visibleProducts, setVisibleProducts] = useState(6);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [checkoutProduct, setCheckoutProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     let filtered = products;
@@ -55,15 +65,22 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
     }
   };
 
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toast({
+      title: "Added to Cart!",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
+  const handleViewProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDetailModalOpen(true);
+  };
+
   const handleBuyNow = (product: Product) => {
-    if (product.buy_now_link) {
-      // Use custom buy now link if provided
-      window.open(product.buy_now_link, '_blank');
-    } else {
-      // Fallback to default Google Form URL with product name pre-filled
-      const formUrl = `https://forms.gle/98wXZbtzzLcH7GFSA?usp=pp_url&entry.1234567890=${encodeURIComponent(product.name)}&entry.0987654321=${encodeURIComponent(product.price)}`;
-      window.open(formUrl, '_blank');
-    }
+    setCheckoutProduct(product);
+    setIsCheckoutModalOpen(true);
   };
 
   const loadMoreProducts = () => {
@@ -105,7 +122,7 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
 
             <CardContent className="p-0">
               {/* Product Image */}
-              <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden cursor-pointer" onClick={() => handleViewProduct(product)}>
                 <img
                   src={product.image}
                   alt={product.name}
@@ -182,6 +199,7 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <Button
+                    onClick={() => handleViewProduct(product)}
                     variant="outline"
                     className="flex-1 border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-400 transition-all duration-300"
                   >
@@ -189,7 +207,7 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
                     View
                   </Button>
                   <Button
-                    onClick={() => handleBuyNow(product)}
+                    onClick={() => handleAddToCart(product)}
                     className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                   >
                     <ShoppingCart className="h-4 w-4" />
@@ -227,6 +245,21 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
           </p>
         </div>
       )}
+
+      {/* Product Detail Modal */}
+      <ProductDetailModal 
+        product={selectedProduct}
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        onBuyNow={handleBuyNow}
+      />
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        product={checkoutProduct}
+        isOpen={isCheckoutModalOpen}
+        onClose={() => setIsCheckoutModalOpen(false)}
+      />
     </div>
   );
 };

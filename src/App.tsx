@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { FormSubmissionProvider } from "@/contexts/FormSubmissionContext";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
@@ -25,7 +26,8 @@ const App = () => (
     <TooltipProvider>
       <AdminProvider>
         <ProductProvider>
-          <FormSubmissionProvider>
+          <CartProvider>
+            <FormSubmissionProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
@@ -42,7 +44,8 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </FormSubmissionProvider>
+            </FormSubmissionProvider>
+          </CartProvider>
         </ProductProvider>
       </AdminProvider>
     </TooltipProvider>
