@@ -179,14 +179,22 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
                   )}
                 </div>
 
-                {/* Buy Now Button */}
-                <Button
-                  onClick={() => handleBuyNow(product)}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 group"
-                >
-                  <ShoppingCart className="h-4 w-4 mr-2 group-hover:animate-bounce" />
-                  {product.buy_now_text || 'Buy Now'}
-                </Button>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 border-amber-300 text-amber-600 hover:bg-amber-50 hover:border-amber-400 transition-all duration-300"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => handleBuyNow(product)}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
