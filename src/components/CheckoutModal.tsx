@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, CreditCard, Truck, CheckCircle } from 'lucide-react';
+import { ShoppingCart, CreditCard, Truck, CheckCircle, Plus, Minus } from 'lucide-react';
 import { Product } from '@/contexts/ProductContext';
+import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 
 interface CheckoutModalProps {
-  product: Product | null;
+  product?: Product | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -30,9 +31,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     notes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { items, updateQuantity, getTotalItems, getTotalPrice, clearCart } = useCart();
   const { toast } = useToast();
 
-  if (!product) return null;
+  // Use cart items if no specific product is provided
+  const orderItems = product ? [{ ...product, quantity: 1 }] : items;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -45,10 +48,20 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
     // Simulate order submission
     setTimeout(() => {
+      const orderDescription = product 
+        ? `Your order for ${product.name} has been placed.`
+        : `Your order with ${getTotalItems()} items has been placed.`;
+      
       toast({
         title: "Order Placed Successfully!",
-        description: `Your order for ${product.name} has been placed. We'll contact you soon!`,
+        description: `${orderDescription} We'll contact you soon!`,
       });
+      
+      // Clear cart if it's a cart checkout
+      if (!product) {
+        clearCart();
+      }
+      
       setIsSubmitting(false);
       onClose();
       setFormData({
@@ -63,9 +76,19 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }, 2000);
   };
 
-  const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
-  const shippingCost = 150; // Fixed shipping cost
-  const totalCost = productPrice + shippingCost;
+  const calculateTotal = () => {
+    if (product) {
+      const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
+      const shippingCost = 150;
+      return { subtotal: productPrice, shipping: shippingCost, total: productPrice + shippingCost };
+    } else {
+      const subtotal = getTotalPrice();
+      const shippingCost = 150;
+      return { subtotal, shipping: shippingCost, total: subtotal + shippingCost };
+    }
+  };
+
+  const { subtotal, shipping, total } = calculateTotal();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -81,39 +104,69 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           {/* Order Summary */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-gray-900 mb-3">Order Summary</h3>
-            <div className="flex items-center space-x-4">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-16 h-16 object-cover rounded"
-              />
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">{product.name}</h4>
-                <p className="text-sm text-gray-600">{product.category}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">{product.price}</p>
-              </div>
+            
+            {/* Display items */}
+            <div className="space-y-3">
+              {orderItems.map((item) => (
+                <div key={item.id} className="flex items-center space-x-4">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900">{item.name}</h4>
+                    <p className="text-sm text-gray-600">{item.category}</p>
+                    {!product && (
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="w-8 text-center text-sm">{item.quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">{item.price}</p>
+                    {!product && item.quantity > 1 && (
+                      <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
             
             <Separator className="my-3" />
             
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span>Product Price:</span>
-                <span>Rs. {productPrice.toLocaleString()}</span>
+                <span>Subtotal:</span>
+                <span>Rs. {subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="flex items-center">
                   <Truck className="w-4 h-4 mr-1" />
                   Shipping:
                 </span>
-                <span>Rs. {shippingCost}</span>
+                <span>Rs. {shipping}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total:</span>
-                <span>Rs. {totalCost.toLocaleString()}</span>
+                <span>Rs. {total.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -228,7 +281,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               ) : (
                 <>
                   <CheckCircle className="w-5 h-5 mr-2" />
-                  Place Order - Rs. {totalCost.toLocaleString()}
+                  Place Order - Rs. {total.toLocaleString()}
                 </>
               )}
             </Button>

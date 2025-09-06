@@ -15,9 +15,10 @@ import CheckoutModal from './CheckoutModal';
 interface ProductGridProps {
   searchQuery: string;
   selectedCategory?: string;
+  onViewProduct?: (product: Product) => void;
 }
 
-const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: ProductGridProps) => {
+const ProductGrid = ({ searchQuery, selectedCategory = 'All Products', onViewProduct }: ProductGridProps) => {
   const { isAdminMode } = useAdmin();
   const { products, updateProduct, deleteProduct } = useProducts();
   const { addToCart } = useCart();
@@ -74,8 +75,12 @@ const ProductGrid = ({ searchQuery, selectedCategory = 'All Products' }: Product
   };
 
   const handleViewProduct = (product: Product) => {
-    setSelectedProduct(product);
-    setIsDetailModalOpen(true);
+    if (onViewProduct) {
+      onViewProduct(product);
+    } else {
+      setSelectedProduct(product);
+      setIsDetailModalOpen(true);
+    }
   };
 
   const handleBuyNow = (product: Product) => {
