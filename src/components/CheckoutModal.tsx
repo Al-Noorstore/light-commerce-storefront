@@ -5,7 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, CreditCard, Truck, CheckCircle, Plus, Minus } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ShoppingCart, CreditCard, Truck, CheckCircle, Plus, Minus, MapPin } from 'lucide-react';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import { Product } from '@/contexts/ProductContext';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
@@ -25,17 +28,35 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     name: '',
     email: '',
     phone: '',
+    country: '',
     address: '',
     city: '',
     postalCode: '',
-    notes: ''
+    notes: '',
+    paymentMethod: 'cash-on-delivery'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [productQuantities, setProductQuantities] = useState<{[key: number]: number}>({});
   const { items, updateQuantity, getTotalItems, getTotalPrice, clearCart } = useCart();
   const { toast } = useToast();
 
   // Use cart items if no specific product is provided
-  const orderItems = product ? [{ ...product, quantity: 1 }] : items;
+  const orderItems = product ? [{ ...product, quantity: productQuantities[product.id] || 1 }] : items;
+
+  const updateProductQuantity = (productId: number, quantity: number) => {
+    if (quantity < 1) return;
+    setProductQuantities(prev => ({ ...prev, [productId]: quantity }));
+  };
+
+  const getItemPrice = (item: any) => {
+    const price = parseFloat(item.price.replace(/[^\d.]/g, ''));
+    const quantity = product ? (productQuantities[item.id] || 1) : item.quantity;
+    return price * quantity;
+  };
+
+  const getItemQuantity = (item: any) => {
+    return product ? (productQuantities[item.id] || 1) : item.quantity;
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -68,10 +89,12 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         name: '',
         email: '',
         phone: '',
+        country: '',
         address: '',
         city: '',
         postalCode: '',
-        notes: ''
+        notes: '',
+        paymentMethod: 'cash-on-delivery'
       });
     }, 2000);
   };
@@ -79,8 +102,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const calculateTotal = () => {
     if (product) {
       const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
-      const shippingCost = 150;
-      return { subtotal: productPrice, shipping: shippingCost, total: productPrice + shippingCost };
+      const quantity = productQuantities[product.id] || 1;
+      const subtotal = productPrice * quantity;
+      const shippingCost = 150; // This will be dynamic based on product settings
+      return { subtotal, shipping: shippingCost, total: subtotal + shippingCost };
     } else {
       const subtotal = getTotalPrice();
       const shippingCost = 150;
@@ -117,33 +142,30 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-900">{item.name}</h4>
                     <p className="text-sm text-gray-600">{item.category}</p>
-                    {!product && (
-                      <div className="flex items-center space-x-2 mt-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center text-sm">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex items-center space-x-2 mt-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => product ? updateProductQuantity(item.id, getItemQuantity(item) - 1) : updateQuantity(item.id, item.quantity - 1)}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="w-8 text-center text-sm font-medium">{getItemQuantity(item)}</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => product ? updateProductQuantity(item.id, getItemQuantity(item) + 1) : updateQuantity(item.id, item.quantity + 1)}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{item.price}</p>
-                    {!product && item.quantity > 1 && (
-                      <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-                    )}
+                    <p className="text-sm text-gray-500">Rs. {parseFloat(item.price.replace(/[^\d.]/g, '')).toLocaleString()} each</p>
+                    <p className="font-semibold text-gray-900">Rs. {getItemPrice(item).toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">Qty: {getItemQuantity(item)}</p>
                   </div>
                 </div>
               ))}
@@ -187,27 +209,43 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
               
               <div>
-                <Label htmlFor="phone">Phone Number *</Label>
+                <Label htmlFor="email">Email Address</Label>
                 <Input
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="+92 300 1234567"
-                  required
+                  placeholder="your@email.com"
                 />
               </div>
             </div>
             
             <div>
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="country" className="flex items-center">
+                <MapPin className="w-4 h-4 mr-1" />
+                Country *
+              </Label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
+                id="country"
+                name="country"
+                value={formData.country}
                 onChange={handleInputChange}
-                placeholder="your@email.com"
+                placeholder="e.g., Pakistan, India, Bangladesh"
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="phone">Phone Number *</Label>
+              <PhoneInput
+                international
+                countryCallingCodeEditable={false}
+                defaultCountry="PK"
+                value={formData.phone}
+                onChange={(value) => setFormData(prev => ({ ...prev, phone: value || '' }))}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Enter phone number"
               />
             </div>
             
@@ -261,12 +299,53 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             
             {/* Payment Method */}
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900 mb-2 flex items-center">
+              <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                 <CreditCard className="w-5 h-5 mr-2" />
                 Payment Method
               </h3>
-              <p className="text-sm text-blue-800">
-                Cash on Delivery (COD) - Pay when you receive your order
+              <RadioGroup
+                value={formData.paymentMethod}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
+                className="space-y-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="cash-on-delivery" id="cod" />
+                  <Label htmlFor="cod" className="flex items-center cursor-pointer">
+                    <Truck className="w-4 h-4 mr-2 text-green-600" />
+                    Cash on Delivery (COD)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="jazzcash" id="jazzcash" />
+                  <Label htmlFor="jazzcash" className="flex items-center cursor-pointer">
+                    <CreditCard className="w-4 h-4 mr-2 text-purple-600" />
+                    JazzCash
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="easypaisa" id="easypaisa" />
+                  <Label htmlFor="easypaisa" className="flex items-center cursor-pointer">
+                    <CreditCard className="w-4 h-4 mr-2 text-blue-600" />
+                    EasyPaisa
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="debit-card" id="debit-card" />
+                  <Label htmlFor="debit-card" className="flex items-center cursor-pointer">
+                    <CreditCard className="w-4 h-4 mr-2 text-gray-600" />
+                    Debit Card
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="payoneer" id="payoneer" />
+                  <Label htmlFor="payoneer" className="flex items-center cursor-pointer">
+                    <CreditCard className="w-4 h-4 mr-2 text-orange-600" />
+                    Payoneer
+                  </Label>
+                </div>
+              </RadioGroup>
+              <p className="text-xs text-blue-700 mt-2">
+                Choose your preferred payment method. COD is available for most products.
               </p>
             </div>
             
