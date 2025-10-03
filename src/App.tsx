@@ -8,6 +8,7 @@ import { AdminProvider } from "@/contexts/AdminContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { FormSubmissionProvider } from "@/contexts/FormSubmissionContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
@@ -24,30 +25,32 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AdminProvider>
-        <ProductProvider>
-          <CartProvider>
-            <FormSubmissionProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/test-admin" element={<TestAdmin />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/delivery-policy" element={<DeliveryPolicy />} />
-                <Route path="/return-policy" element={<ReturnPolicy />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/faqs" element={<FAQs />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-            </FormSubmissionProvider>
-          </CartProvider>
-        </ProductProvider>
-      </AdminProvider>
+      <AuthProvider>
+        <AdminProvider>
+          <ProductProvider>
+            <CartProvider>
+              <FormSubmissionProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/test-admin" element={<TestAdmin />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/delivery-policy" element={<DeliveryPolicy />} />
+                  <Route path="/return-policy" element={<ReturnPolicy />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/faqs" element={<FAQs />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+              </FormSubmissionProvider>
+            </CartProvider>
+          </ProductProvider>
+        </AdminProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
