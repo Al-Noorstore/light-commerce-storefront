@@ -16,12 +16,15 @@ export type Database = {
     Tables: {
       admin_products: {
         Row: {
+          badge: string | null
           best_seller: boolean | null
           category: string
+          color: string | null
           created_at: string | null
           currency: string | null
           data_ai_hint: string | null
           deleted: boolean | null
+          delivery_charges: number | null
           description: string
           features: string[] | null
           id: string
@@ -34,15 +37,22 @@ export type Database = {
           rating: number | null
           reviews_count: number | null
           shipping: Json | null
+          size: string | null
+          sku: string | null
+          social_media_link: string | null
           updated_at: string | null
+          video_url: string | null
         }
         Insert: {
+          badge?: string | null
           best_seller?: boolean | null
           category: string
+          color?: string | null
           created_at?: string | null
           currency?: string | null
           data_ai_hint?: string | null
           deleted?: boolean | null
+          delivery_charges?: number | null
           description: string
           features?: string[] | null
           id?: string
@@ -55,15 +65,22 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           shipping?: Json | null
+          size?: string | null
+          sku?: string | null
+          social_media_link?: string | null
           updated_at?: string | null
+          video_url?: string | null
         }
         Update: {
+          badge?: string | null
           best_seller?: boolean | null
           category?: string
+          color?: string | null
           created_at?: string | null
           currency?: string | null
           data_ai_hint?: string | null
           deleted?: boolean | null
+          delivery_charges?: number | null
           description?: string
           features?: string[] | null
           id?: string
@@ -76,7 +93,11 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           shipping?: Json | null
+          size?: string | null
+          sku?: string | null
+          social_media_link?: string | null
           updated_at?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -131,6 +152,126 @@ export type Database = {
           order_details?: Json | null
           status?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      hero_slides: {
+        Row: {
+          created_at: string | null
+          heading: string | null
+          id: number
+          image_url: string
+          link_url: string | null
+          position: number
+          subheading: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          heading?: string | null
+          id?: never
+          image_url: string
+          link_url?: string | null
+          position: number
+          subheading?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          heading?: string | null
+          id?: never
+          image_url?: string
+          link_url?: string | null
+          position?: number
+          subheading?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: number
+          order_id: number
+          price_at_purchase: number
+          product_id: number
+          quantity: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          order_id: number
+          price_at_purchase: number
+          product_id: number
+          quantity: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          order_id?: number
+          price_at_purchase?: number
+          product_id?: number
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address: string
+          country: string | null
+          created_at: string | null
+          customer_name: string
+          email: string
+          id: number
+          payment_method: string | null
+          payment_proof_url: string | null
+          phone: string | null
+          province: string | null
+          status: string
+          zip_code: string | null
+        }
+        Insert: {
+          address: string
+          country?: string | null
+          created_at?: string | null
+          customer_name: string
+          email: string
+          id?: never
+          payment_method?: string | null
+          payment_proof_url?: string | null
+          phone?: string | null
+          province?: string | null
+          status?: string
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string
+          country?: string | null
+          created_at?: string | null
+          customer_name?: string
+          email?: string
+          id?: never
+          payment_method?: string | null
+          payment_proof_url?: string | null
+          phone?: string | null
+          province?: string | null
+          status?: string
+          zip_code?: string | null
         }
         Relationships: []
       }
@@ -209,6 +350,81 @@ export type Database = {
           role?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      seasonal_banners: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: number
+          image_url: string
+          start_date: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: never
+          image_url: string
+          start_date: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: never
+          image_url?: string
+          start_date?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          created_at: string | null
+          id: number
+          logo_url: string | null
+          site_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          logo_url?: string | null
+          site_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          logo_url?: string | null
+          site_name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      social_links: {
+        Row: {
+          created_at: string | null
+          id: number
+          platform: string
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          platform: string
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          platform?: string
+          url?: string
         }
         Relationships: []
       }

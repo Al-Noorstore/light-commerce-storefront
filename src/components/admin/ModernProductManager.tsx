@@ -27,6 +27,13 @@ interface Product {
   best_seller: boolean;
   shipping: any;
   deleted: boolean;
+  sku?: string;
+  color?: string;
+  size?: string;
+  video_url?: string;
+  social_media_link?: string;
+  badge?: string;
+  delivery_charges?: number;
 }
 
 export default function ModernProductManager() {
@@ -102,7 +109,14 @@ export default function ModernProductManager() {
       reviews_count: 0,
       on_sale: false,
       best_seller: false,
-      shipping: { type: 'free' }
+      shipping: { type: 'free' },
+      sku: '',
+      color: '',
+      size: '',
+      video_url: '',
+      social_media_link: '',
+      badge: '',
+      delivery_charges: 0
     });
     setIsDialogOpen(true);
   };
@@ -139,7 +153,14 @@ export default function ModernProductManager() {
         on_sale: formData.on_sale || false,
         best_seller: formData.best_seller || false,
         shipping: formData.shipping || { type: 'free' },
-        deleted: false
+        deleted: false,
+        sku: formData.sku || null,
+        color: formData.color || null,
+        size: formData.size || null,
+        video_url: formData.video_url || null,
+        social_media_link: formData.social_media_link || null,
+        badge: formData.badge || null,
+        delivery_charges: formData.delivery_charges || 0
       };
 
       if (editingProduct) {
@@ -425,6 +446,78 @@ export default function ModernProductManager() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Product description..."
                 rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="sku">SKU</Label>
+                <Input
+                  id="sku"
+                  value={formData.sku || ''}
+                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                  placeholder="Product SKU"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="badge">Badge</Label>
+                <Input
+                  id="badge"
+                  value={formData.badge || ''}
+                  onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                  placeholder="e.g., Best Offer, 20% off, Free Delivery"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="color">Color</Label>
+                <Input
+                  id="color"
+                  value={formData.color || ''}
+                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  placeholder="Product color"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="size">Size</Label>
+                <Input
+                  id="size"
+                  value={formData.size || ''}
+                  onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                  placeholder="Product size"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="delivery_charges">Delivery Charges</Label>
+                <Input
+                  id="delivery_charges"
+                  type="number"
+                  value={formData.delivery_charges || ''}
+                  onChange={(e) => setFormData({ ...formData, delivery_charges: parseFloat(e.target.value) || 0 })}
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="video_url">Video URL (Optional)</Label>
+              <Input
+                id="video_url"
+                value={formData.video_url || ''}
+                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                placeholder="YouTube, Vimeo, or any video link"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="social_media_link">Social Media Link</Label>
+              <Input
+                id="social_media_link"
+                value={formData.social_media_link || ''}
+                onChange={(e) => setFormData({ ...formData, social_media_link: e.target.value })}
+                placeholder="Facebook, Instagram, or any social media link"
               />
             </div>
           </div>
