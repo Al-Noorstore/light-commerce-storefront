@@ -40,6 +40,11 @@ const Admin = () => {
 
   useEffect(() => {
     const loadProducts = async () => {
+      if (!isAdmin) {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const { data, error } = await supabase
           .from('admin_products')
@@ -55,10 +60,10 @@ const Admin = () => {
       }
     };
 
-    if (isAdmin) {
+    if (!authLoading) {
       loadProducts();
     }
-  }, [isAdmin]);
+  }, [isAdmin, authLoading]);
 
   const handleLogout = async () => {
     try {

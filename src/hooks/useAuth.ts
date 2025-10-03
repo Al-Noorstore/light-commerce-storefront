@@ -53,57 +53,52 @@ export const useAuthState = () => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
+        setLoading(false);
         
         if (session?.user) {
-          // Fetch user profile with setTimeout to prevent recursion
-          setTimeout(async () => {
-            try {
-              const { data: profileData } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('user_id', session.user.id)
-                .single();
-              
-              setProfile(profileData);
-            } catch (error) {
-              console.error('Error fetching profile:', error);
-            }
-          }, 0);
+          // Fetch user profile in background
+          supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single()
+            .then(({ data, error }) => {
+              if (!error && data) {
+                setProfile(data);
+              } else if (error) {
+                console.error('Error fetching profile:', error);
+              }
+            });
         } else {
           setProfile(null);
         }
-        
-        setLoading(false);
       }
     );
 
-    // THEN check for existing session
+    // Check for existing session immediately
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      setLoading(false);
       
       if (session?.user) {
-        // Fetch profile for existing session
-        setTimeout(async () => {
-          try {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .single();
-            
-            setProfile(profileData);
-          } catch (error) {
-            console.error('Error fetching profile:', error);
-          }
-          setLoading(false);
-        }, 0);
-      } else {
-        setLoading(false);
+        // Fetch profile in background
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (!error && data) {
+              setProfile(data);
+            } else if (error) {
+              console.error('Error fetching profile:', error);
+            }
+          });
       }
     });
 
