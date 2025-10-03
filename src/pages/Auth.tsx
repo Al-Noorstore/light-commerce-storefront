@@ -45,7 +45,13 @@ const Auth: React.FC = () => {
           title: "Welcome back!",
           description: "You have been successfully signed in.",
         });
-        navigate('/');
+        
+        // Redirect admin users to admin panel
+        if (email === 'alnoormall.pk@gmail.com') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       }
     } catch (error: any) {
       toast({
