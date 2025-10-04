@@ -326,7 +326,7 @@ export default function ModernProductManager() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleEditProduct(product)}
-                  className="flex-1"
+                  className="flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                 >
                   <Edit className="w-4 h-4 mr-1" />
                   Edit
@@ -335,7 +335,7 @@ export default function ModernProductManager() {
                   variant="destructive"
                   size="sm"
                   onClick={() => handleDeleteProduct(product.id)}
-                  className="flex-1"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                 >
                   <Trash2 className="w-4 h-4 mr-1" />
                   Delete
