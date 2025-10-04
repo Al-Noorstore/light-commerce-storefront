@@ -11,29 +11,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { Plus, Edit, Trash2, Package, Search, Filter, RefreshCw } from 'lucide-react';
 
 interface Product {
-  id: string;
+  id: number;
   name: string;
-  price: number;
-  currency: string;
-  original_price?: number;
-  quantity: number;
-  image_url: string;
+  price: string;
+  original_price?: string;
+  stock?: number;
+  image: string;
   category: string;
-  description: string;
-  features: string[];
-  rating: number;
-  reviews_count: number;
-  on_sale: boolean;
-  best_seller: boolean;
-  shipping: any;
-  deleted: boolean;
-  sku?: string;
-  color?: string;
-  size?: string;
-  video_url?: string;
-  social_media_link?: string;
+  rating?: number;
+  buy_now_link?: string;
+  buy_now_text?: string;
   badge?: string;
-  delivery_charges?: number;
 }
 
 export default function ModernProductManager() {
@@ -52,9 +40,8 @@ export default function ModernProductManager() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('admin_products')
+        .from('products')
         .select('*')
-        .eq('deleted', false)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -98,25 +85,15 @@ export default function ModernProductManager() {
     setEditingProduct(null);
     setFormData({
       name: '',
-      price: 0,
-      currency: 'PKR',
-      quantity: 100,
-      image_url: '',
+      price: '0',
+      original_price: '',
+      stock: 0,
+      image: '',
       category: '',
-      description: '',
-      features: [],
       rating: 4.5,
-      reviews_count: 0,
-      on_sale: false,
-      best_seller: false,
-      shipping: { type: 'free' },
-      sku: '',
-      color: '',
-      size: '',
-      video_url: '',
-      social_media_link: '',
-      badge: '',
-      delivery_charges: 0
+      buy_now_link: '',
+      buy_now_text: 'Buy Now',
+      badge: ''
     });
     setIsDialogOpen(true);
   };
@@ -129,7 +106,7 @@ export default function ModernProductManager() {
 
   const handleSaveProduct = async () => {
     try {
-      if (!formData.name || !formData.category || !formData.image_url) {
+      if (!formData.name || !formData.category || !formData.image) {
         toast({
           title: "Validation Error",
           description: "Please fill in all required fields",
@@ -141,31 +118,19 @@ export default function ModernProductManager() {
       const productData = {
         name: formData.name!,
         category: formData.category!,
-        description: formData.description || '',
-        image_url: formData.image_url!,
-        price: formData.price || 0,
-        currency: formData.currency || 'PKR',
-        original_price: formData.original_price,
-        quantity: formData.quantity || 100,
-        features: Array.isArray(formData.features) ? formData.features : [],
+        image: formData.image!,
+        price: formData.price?.toString() || '0',
+        original_price: formData.original_price || null,
+        stock: formData.stock || 0,
         rating: formData.rating || 4.5,
-        reviews_count: formData.reviews_count || 0,
-        on_sale: formData.on_sale || false,
-        best_seller: formData.best_seller || false,
-        shipping: formData.shipping || { type: 'free' },
-        deleted: false,
-        sku: formData.sku || null,
-        color: formData.color || null,
-        size: formData.size || null,
-        video_url: formData.video_url || null,
-        social_media_link: formData.social_media_link || null,
-        badge: formData.badge || null,
-        delivery_charges: formData.delivery_charges || 0
+        buy_now_link: formData.buy_now_link || null,
+        buy_now_text: formData.buy_now_text || 'Buy Now',
+        badge: formData.badge || null
       };
 
       if (editingProduct) {
         const { error } = await supabase
-          .from('admin_products')
+          .from('products')
           .update(productData)
           .eq('id', editingProduct.id);
         
@@ -177,7 +142,7 @@ export default function ModernProductManager() {
         });
       } else {
         const { error } = await supabase
-          .from('admin_products')
+          .from('products')
           .insert(productData);
         
         if (error) throw error;
@@ -199,11 +164,13 @@ export default function ModernProductManager() {
     }
   };
 
-  const handleDeleteProduct = async (productId: string) => {
+  const handleDeleteProduct = async (productId: number) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    
     try {
       const { error } = await supabase
-        .from('admin_products')
-        .update({ deleted: true })
+        .from('products')
+        .delete()
         .eq('id', productId);
       
       if (error) throw error;
@@ -292,18 +259,13 @@ export default function ModernProductManager() {
           <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="aspect-square relative">
               <img
-                src={product.image_url}
+                src={product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
-              {product.best_seller && (
-                <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                  Best Seller
-                </div>
-              )}
-              {product.on_sale && (
-                <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                  On Sale
+              {product.badge && (
+                <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                  {product.badge}
                 </div>
               )}
             </div>
@@ -312,14 +274,14 @@ export default function ModernProductManager() {
               <p className="text-sm text-gray-600 mb-2">{product.category}</p>
               <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center space-x-2">
-                  <span className="font-bold text-lg">{product.currency} {product.price}</span>
+                  <span className="font-bold text-lg">PKR {product.price}</span>
                   {product.original_price && (
                     <span className="text-sm text-gray-500 line-through">
-                      {product.currency} {product.original_price}
+                      PKR {product.original_price}
                     </span>
                   )}
                 </div>
-                <span className="text-sm text-gray-600">Stock: {product.quantity}</span>
+                <span className="text-sm text-gray-600">Stock: {product.stock || 0}</span>
               </div>
               <div className="flex space-x-2">
                 <Button
@@ -400,9 +362,8 @@ export default function ModernProductManager() {
                 <Label htmlFor="price">Price *</Label>
                 <Input
                   id="price"
-                  type="number"
                   value={formData.price || ''}
-                  onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   placeholder="0.00"
                 />
               </div>
@@ -410,55 +371,34 @@ export default function ModernProductManager() {
                 <Label htmlFor="original_price">Original Price</Label>
                 <Input
                   id="original_price"
-                  type="number"
                   value={formData.original_price || ''}
-                  onChange={(e) => setFormData({ ...formData, original_price: parseFloat(e.target.value) || undefined })}
+                  onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
                   placeholder="0.00"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="quantity">Stock Quantity</Label>
+                <Label htmlFor="stock">Stock Quantity</Label>
                 <Input
-                  id="quantity"
+                  id="stock"
                   type="number"
-                  value={formData.quantity || ''}
-                  onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })}
+                  value={formData.stock || ''}
+                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })}
                   placeholder="100"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image_url">Image URL *</Label>
+              <Label htmlFor="image">Image URL *</Label>
               <Input
-                id="image_url"
-                value={formData.image_url || ''}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                id="image"
+                value={formData.image || ''}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 placeholder="https://example.com/image.jpg"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description || ''}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Product description..."
-                rows={3}
-              />
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="sku">SKU</Label>
-                <Input
-                  id="sku"
-                  value={formData.sku || ''}
-                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                  placeholder="Product SKU"
-                />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="badge">Badge</Label>
                 <Input
@@ -468,57 +408,40 @@ export default function ModernProductManager() {
                   placeholder="e.g., Best Offer, 20% off, Free Delivery"
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="color">Color</Label>
+                <Label htmlFor="rating">Rating</Label>
                 <Input
-                  id="color"
-                  value={formData.color || ''}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  placeholder="Product color"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="size">Size</Label>
-                <Input
-                  id="size"
-                  value={formData.size || ''}
-                  onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-                  placeholder="Product size"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="delivery_charges">Delivery Charges</Label>
-                <Input
-                  id="delivery_charges"
+                  id="rating"
                   type="number"
-                  value={formData.delivery_charges || ''}
-                  onChange={(e) => setFormData({ ...formData, delivery_charges: parseFloat(e.target.value) || 0 })}
-                  placeholder="0.00"
+                  step="0.1"
+                  min="0"
+                  max="5"
+                  value={formData.rating || ''}
+                  onChange={(e) => setFormData({ ...formData, rating: parseFloat(e.target.value) || 0 })}
+                  placeholder="4.5"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="video_url">Video URL (Optional)</Label>
-              <Input
-                id="video_url"
-                value={formData.video_url || ''}
-                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                placeholder="YouTube, Vimeo, or any video link"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="social_media_link">Social Media Link</Label>
-              <Input
-                id="social_media_link"
-                value={formData.social_media_link || ''}
-                onChange={(e) => setFormData({ ...formData, social_media_link: e.target.value })}
-                placeholder="Facebook, Instagram, or any social media link"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="buy_now_link">Buy Now Link</Label>
+                <Input
+                  id="buy_now_link"
+                  value={formData.buy_now_link || ''}
+                  onChange={(e) => setFormData({ ...formData, buy_now_link: e.target.value })}
+                  placeholder="https://example.com/product"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="buy_now_text">Buy Now Text</Label>
+                <Input
+                  id="buy_now_text"
+                  value={formData.buy_now_text || ''}
+                  onChange={(e) => setFormData({ ...formData, buy_now_text: e.target.value })}
+                  placeholder="Buy Now"
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>
