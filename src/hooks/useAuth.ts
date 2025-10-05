@@ -130,7 +130,30 @@ export const useAuthState = () => {
     await supabase.auth.signOut();
   };
 
-  const isAdmin = profile?.role === 'admin' || user?.email === 'alnoormall.pk@gmail.com';
+  // Check admin status from user_roles table using has_role function
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      });
+
+      if (!error && data) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminRole();
+  }, [user]);
 
   return {
     user,

@@ -3,9 +3,11 @@ import React from 'react';
 import { Edit, Eye, Settings, Plus, Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/hooks/useAuth';
 
 const AdminToolbar = () => {
-  const { isAdminMode, setIsAdminMode, isAdmin } = useAdmin();
+  const { isAdminMode, setIsAdminMode } = useAdmin();
+  const { isAdmin } = useAuth();
 
   if (!isAdmin) return null;
 
