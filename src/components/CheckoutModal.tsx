@@ -10,7 +10,7 @@ import { ShoppingCart, CreditCard, Truck, CheckCircle, Plus, Minus, MapPin } fro
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { Product } from '@/contexts/ProductContext';
-import { useCart } from '@/contexts/CartContext';
+import { useCart, CartItem } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 
 interface CheckoutModalProps {
@@ -67,15 +67,59 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate order submission
-    setTimeout(() => {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      const { subtotal, shipping, total } = calculateTotal();
+      const currency = 'PKR';
+
+      // Create order
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          customer_name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          country: formData.country,
+          zip_code: formData.postalCode,
+          notes: formData.notes,
+          payment_method: formData.paymentMethod,
+          subtotal,
+          delivery_charges: shipping,
+          total,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItemsToInsert = orderItems.map(item => ({
+        order_id: orderData.id,
+        product_id: item.id,
+        product_name: item.name,
+        product_image: item.image,
+        quantity: getItemQuantity(item),
+        price_at_purchase: parseFloat(item.price.replace(/[^\d.]/g, '')),
+        currency: currency
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItemsToInsert);
+
+      if (itemsError) throw itemsError;
+
       const orderDescription = product 
         ? `Your order for ${product.name} has been placed.`
         : `Your order with ${getTotalItems()} items has been placed.`;
       
       toast({
         title: "Order Placed Successfully!",
-        description: `${orderDescription} We'll contact you soon!`,
+        description: `${orderDescription} Order #${orderData.order_number}. We'll contact you soon!`,
       });
       
       // Clear cart if it's a cart checkout
@@ -96,7 +140,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         notes: '',
         paymentMethod: 'cash-on-delivery'
       });
-    }, 2000);
+    } catch (error: any) {
+      console.error('Order submission error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to place order. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
   };
 
   const calculateTotal = () => {
@@ -123,6 +175,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <ShoppingCart className="w-6 h-6 mr-2" />
             Checkout
           </DialogTitle>
+          <div className="text-sm text-muted-foreground mt-2">
+            Complete your order details below
+          </div>
         </DialogHeader>
         
         <div className="space-y-6">

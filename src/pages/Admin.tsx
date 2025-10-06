@@ -24,6 +24,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import ModernProductManager from '@/components/admin/ModernProductManager';
+import OrdersManager from '@/components/admin/OrdersManager';
 import PasswordManager from '@/components/admin/PasswordManager';
 import FormManager from '@/components/admin/FormManager';
 import { useToast } from '@/hooks/use-toast';
@@ -531,13 +532,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="orders">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-4">Orders Management</h3>
-              <p className="text-gray-600 mb-4">Manage customer orders and track deliveries.</p>
-              <Button disabled className="opacity-50">
-                Feature Available in Full Version
-              </Button>
-            </div>
+            <OrdersManager />
           </TabsContent>
 
           <TabsContent value="categories">
