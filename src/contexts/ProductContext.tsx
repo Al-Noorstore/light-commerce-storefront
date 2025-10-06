@@ -13,6 +13,13 @@ interface Product {
   stock?: number;
   buy_now_link?: string;
   buy_now_text?: string;
+  sku?: string;
+  color?: string;
+  size?: string;
+  delivery_charges?: number;
+  video_url?: string;
+  social_media_link?: string;
+  description?: string;
 }
 
 interface ProductContextType {

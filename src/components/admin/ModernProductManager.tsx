@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -22,6 +22,13 @@ interface Product {
   buy_now_link?: string;
   buy_now_text?: string;
   badge?: string;
+  sku?: string;
+  color?: string;
+  size?: string;
+  delivery_charges?: number;
+  video_url?: string;
+  social_media_link?: string;
+  description?: string;
 }
 
 export default function ModernProductManager() {
@@ -398,29 +405,101 @@ export default function ModernProductManager() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description || ''}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Enter product description"
+                className="min-h-[80px]"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="sku">SKU</Label>
+                <Input
+                  id="sku"
+                  value={formData.sku || ''}
+                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                  placeholder="Product SKU"
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="badge">Badge</Label>
                 <Input
                   id="badge"
                   value={formData.badge || ''}
                   onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                  placeholder="e.g., Best Offer, 20% off, Free Delivery"
+                  placeholder="e.g., Best Offer, 20% OFF"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="color">Color</Label>
+                <Input
+                  id="color"
+                  value={formData.color || ''}
+                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  placeholder="Product color"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="rating">Rating</Label>
+                <Label htmlFor="size">Size</Label>
                 <Input
-                  id="rating"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="5"
-                  value={formData.rating || ''}
-                  onChange={(e) => setFormData({ ...formData, rating: parseFloat(e.target.value) || 0 })}
-                  placeholder="4.5"
+                  id="size"
+                  value={formData.size || ''}
+                  onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                  placeholder="Product size"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="delivery_charges">Delivery Charges</Label>
+                <Input
+                  id="delivery_charges"
+                  type="number"
+                  value={formData.delivery_charges || ''}
+                  onChange={(e) => setFormData({ ...formData, delivery_charges: parseFloat(e.target.value) || 0 })}
+                  placeholder="200"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="video_url">Video URL (Optional)</Label>
+              <Input
+                id="video_url"
+                value={formData.video_url || ''}
+                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                placeholder="YouTube, Vimeo, or any video link"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="social_media_link">Social Media Link</Label>
+              <Input
+                id="social_media_link"
+                value={formData.social_media_link || ''}
+                onChange={(e) => setFormData({ ...formData, social_media_link: e.target.value })}
+                placeholder="Facebook, Instagram, or any social media link"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="rating">Rating</Label>
+              <Input
+                id="rating"
+                type="number"
+                step="0.1"
+                min="0"
+                max="5"
+                value={formData.rating || ''}
+                onChange={(e) => setFormData({ ...formData, rating: parseFloat(e.target.value) || 0 })}
+                placeholder="4.5"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">

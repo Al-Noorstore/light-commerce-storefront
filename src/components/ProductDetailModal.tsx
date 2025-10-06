@@ -132,14 +132,75 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
             )}
             
+            {/* Product Details */}
+            <div className="border-t pt-4 space-y-3">
+              {product.sku && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">SKU:</span>
+                  <span className="font-medium">{product.sku}</span>
+                </div>
+              )}
+              {product.color && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Color:</span>
+                  <span className="font-medium">{product.color}</span>
+                </div>
+              )}
+              {product.size && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Size:</span>
+                  <span className="font-medium">{product.size}</span>
+                </div>
+              )}
+              {product.delivery_charges !== undefined && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Delivery:</span>
+                  <span className="font-medium">
+                    {product.delivery_charges === 0 ? 'Free Delivery' : `PKR ${product.delivery_charges}`}
+                  </span>
+                </div>
+              )}
+            </div>
+            
             {/* Description */}
             <div className="border-t pt-4">
               <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
               <p className="text-gray-600 leading-relaxed">
-                Experience premium quality with this carefully selected product. 
-                Designed to meet your everyday needs with exceptional durability and style.
+                {product.description || 'Experience premium quality with this carefully selected product. Designed to meet your everyday needs with exceptional durability and style.'}
               </p>
             </div>
+
+            {/* Video */}
+            {product.video_url && (
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-gray-900 mb-2">Product Video</h3>
+                <a 
+                  href={product.video_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline flex items-center"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Watch Product Video
+                </a>
+              </div>
+            )}
+
+            {/* Social Media */}
+            {product.social_media_link && (
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-gray-900 mb-2">Social Media</h3>
+                <a 
+                  href={product.social_media_link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline flex items-center"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  View on Social Media
+                </a>
+              </div>
+            )}
             
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-3 pt-4">
