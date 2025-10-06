@@ -191,26 +191,35 @@ export type Database = {
       order_items: {
         Row: {
           created_at: string | null
+          currency: string | null
           id: number
           order_id: number
           price_at_purchase: number
           product_id: number
+          product_image: string | null
+          product_name: string | null
           quantity: number
         }
         Insert: {
           created_at?: string | null
+          currency?: string | null
           id?: never
           order_id: number
           price_at_purchase: number
           product_id: number
+          product_image?: string | null
+          product_name?: string | null
           quantity: number
         }
         Update: {
           created_at?: string | null
+          currency?: string | null
           id?: never
           order_id?: number
           price_at_purchase?: number
           product_id?: number
+          product_image?: string | null
+          product_name?: string | null
           quantity?: number
         }
         Relationships: [
@@ -233,44 +242,65 @@ export type Database = {
       orders: {
         Row: {
           address: string
+          city: string | null
           country: string | null
           created_at: string | null
           customer_name: string
+          delivery_charges: number | null
           email: string
           id: number
+          notes: string | null
+          order_number: string | null
           payment_method: string | null
           payment_proof_url: string | null
           phone: string | null
           province: string | null
           status: string
+          subtotal: number | null
+          total: number | null
+          updated_at: string | null
           zip_code: string | null
         }
         Insert: {
           address: string
+          city?: string | null
           country?: string | null
           created_at?: string | null
           customer_name: string
+          delivery_charges?: number | null
           email: string
           id?: never
+          notes?: string | null
+          order_number?: string | null
           payment_method?: string | null
           payment_proof_url?: string | null
           phone?: string | null
           province?: string | null
           status?: string
+          subtotal?: number | null
+          total?: number | null
+          updated_at?: string | null
           zip_code?: string | null
         }
         Update: {
           address?: string
+          city?: string | null
           country?: string | null
           created_at?: string | null
           customer_name?: string
+          delivery_charges?: number | null
           email?: string
           id?: never
+          notes?: string | null
+          order_number?: string | null
           payment_method?: string | null
           payment_proof_url?: string | null
           phone?: string | null
           province?: string | null
           status?: string
+          subtotal?: number | null
+          total?: number | null
+          updated_at?: string | null
           zip_code?: string | null
         }
         Relationships: []
@@ -454,6 +484,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_order_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
