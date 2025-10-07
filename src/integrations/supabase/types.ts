@@ -245,6 +245,7 @@ export type Database = {
           city: string | null
           country: string | null
           created_at: string | null
+          customer_id: string | null
           customer_name: string
           delivery_charges: number | null
           email: string
@@ -266,6 +267,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string | null
+          customer_id?: string | null
           customer_name: string
           delivery_charges?: number | null
           email: string
@@ -287,6 +289,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           created_at?: string | null
+          customer_id?: string | null
           customer_name?: string
           delivery_charges?: number | null
           email?: string
