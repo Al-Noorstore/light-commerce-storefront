@@ -308,6 +308,45 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_methods: {
+        Row: {
+          account_number: string | null
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_enabled: boolean | null
+          method_key: string
+          name: string
+          qr_code_url: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          account_number?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          method_key: string
+          name: string
+          qr_code_url?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          account_number?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          method_key?: string
+          name?: string
+          qr_code_url?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           badge: string | null

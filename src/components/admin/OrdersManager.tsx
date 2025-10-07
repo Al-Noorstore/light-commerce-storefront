@@ -41,6 +41,7 @@ interface Order {
   delivery_charges: number;
   total: number;
   payment_method: string;
+  payment_proof_url: string | null;
   status: string;
   created_at: string;
   updated_at: string;
@@ -472,6 +473,32 @@ const OrdersManager: React.FC = () => {
                     <span>Status:</span>
                     <Badge className={getStatusColor(selectedOrder.status)}>{selectedOrder.status}</Badge>
                   </div>
+                  
+                  {selectedOrder.payment_proof_url && (
+                    <div className="pt-3 border-t">
+                      <div className="text-sm text-muted-foreground mb-2">Payment Proof Screenshot</div>
+                      <a 
+                        href={selectedOrder.payment_proof_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <img
+                          src={selectedOrder.payment_proof_url}
+                          alt="Payment Proof"
+                          className="max-w-md border rounded-lg cursor-pointer hover:opacity-90 transition"
+                        />
+                      </a>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() => window.open(selectedOrder.payment_proof_url!, '_blank')}
+                      >
+                        View Full Size
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

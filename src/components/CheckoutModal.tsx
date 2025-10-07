@@ -6,12 +6,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ShoppingCart, CreditCard, Truck, CheckCircle, Plus, Minus, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ShoppingCart, CreditCard, Truck, CheckCircle, Plus, Minus, MapPin, Upload } from 'lucide-react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { Product } from '@/contexts/ProductContext';
 import { useCart, CartItem } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CheckoutModalProps {
   product?: Product | null;
@@ -33,12 +36,33 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     city: '',
     postalCode: '',
     notes: '',
-    paymentMethod: 'cash-on-delivery'
+    paymentType: 'cash_on_delivery',
+    paymentMethod: ''
   });
+  const [paymentProof, setPaymentProof] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [productQuantities, setProductQuantities] = useState<{[key: number]: number}>({});
   const { items, updateQuantity, getTotalItems, getTotalPrice, clearCart } = useCart();
   const { toast } = useToast();
+
+  // Fetch payment methods
+  const { data: paymentMethods } = useQuery({
+    queryKey: ['payment-methods'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('payment_methods')
+        .select('*')
+        .eq('is_enabled', true)
+        .order('display_order');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const codMethods = paymentMethods?.filter(m => m.type === 'cash_on_delivery') || [];
+  const advanceMethods = paymentMethods?.filter(m => m.type === 'advance_payment') || [];
+  const selectedAdvanceMethod = advanceMethods.find(m => m.method_key === formData.paymentMethod);
 
   // Use cart items if no specific product is provided
   const orderItems = product ? [{ ...product, quantity: productQuantities[product.id] || 1 }] : items;
@@ -68,10 +92,33 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      const { supabase } = await import('@/integrations/supabase/client');
-      
       const { subtotal, shipping, total } = calculateTotal();
       const currency = 'PKR';
+
+      let paymentProofUrl = null;
+
+      // Upload payment proof if provided
+      if (paymentProof) {
+        const fileExt = paymentProof.name.split('.').pop();
+        const fileName = `payment-proof-${Date.now()}.${fileExt}`;
+        const filePath = `payment-proofs/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('payment-proofs')
+          .upload(filePath, paymentProof);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('payment-proofs')
+          .getPublicUrl(filePath);
+
+        paymentProofUrl = publicUrl;
+      }
+
+      const finalPaymentMethod = formData.paymentType === 'cash_on_delivery' 
+        ? 'cash_on_delivery' 
+        : formData.paymentMethod;
 
       // Create order
       const { data: orderData, error: orderError } = await supabase
@@ -85,7 +132,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           country: formData.country,
           zip_code: formData.postalCode,
           notes: formData.notes,
-          payment_method: formData.paymentMethod,
+          payment_method: finalPaymentMethod,
+          payment_proof_url: paymentProofUrl,
           subtotal,
           delivery_charges: shipping,
           total,
@@ -138,8 +186,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         city: '',
         postalCode: '',
         notes: '',
-        paymentMethod: 'cash-on-delivery'
+        paymentType: 'cash_on_delivery',
+        paymentMethod: ''
       });
+      setPaymentProof(null);
     } catch (error: any) {
       console.error('Order submission error:', error);
       toast({
@@ -353,55 +403,114 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
             
             {/* Payment Method */}
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-blue-50 p-4 rounded-lg space-y-4">
               <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                 <CreditCard className="w-5 h-5 mr-2" />
                 Payment Method
               </h3>
+              
+              {/* Payment Type Selection */}
               <RadioGroup
-                value={formData.paymentMethod}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
+                value={formData.paymentType}
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  paymentType: value,
+                  paymentMethod: value === 'cash_on_delivery' ? '' : prev.paymentMethod
+                }))}
                 className="space-y-3"
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="cash-on-delivery" id="cod" />
-                  <Label htmlFor="cod" className="flex items-center cursor-pointer">
-                    <Truck className="w-4 h-4 mr-2 text-green-600" />
-                    Cash on Delivery (COD)
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="jazzcash" id="jazzcash" />
-                  <Label htmlFor="jazzcash" className="flex items-center cursor-pointer">
-                    <CreditCard className="w-4 h-4 mr-2 text-purple-600" />
-                    JazzCash
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="easypaisa" id="easypaisa" />
-                  <Label htmlFor="easypaisa" className="flex items-center cursor-pointer">
-                    <CreditCard className="w-4 h-4 mr-2 text-blue-600" />
-                    EasyPaisa
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="debit-card" id="debit-card" />
-                  <Label htmlFor="debit-card" className="flex items-center cursor-pointer">
-                    <CreditCard className="w-4 h-4 mr-2 text-gray-600" />
-                    Debit Card
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="payoneer" id="payoneer" />
-                  <Label htmlFor="payoneer" className="flex items-center cursor-pointer">
-                    <CreditCard className="w-4 h-4 mr-2 text-orange-600" />
-                    Payoneer
-                  </Label>
-                </div>
+                {codMethods.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="cash_on_delivery" id="cod" />
+                    <Label htmlFor="cod" className="flex items-center cursor-pointer">
+                      <Truck className="w-4 h-4 mr-2 text-green-600" />
+                      Cash on Delivery
+                    </Label>
+                  </div>
+                )}
+                
+                {advanceMethods.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="advance_payment" id="advance" />
+                    <Label htmlFor="advance" className="flex items-center cursor-pointer">
+                      <CreditCard className="w-4 h-4 mr-2 text-purple-600" />
+                      Advance Payment
+                    </Label>
+                  </div>
+                )}
               </RadioGroup>
-              <p className="text-xs text-blue-700 mt-2">
-                Choose your preferred payment method. COD is available for most products.
-              </p>
+
+              {/* Advance Payment Methods Dropdown */}
+              {formData.paymentType === 'advance_payment' && advanceMethods.length > 0 && (
+                <div className="space-y-3 ml-6">
+                  <Label>Select Payment Method</Label>
+                  <Select
+                    value={formData.paymentMethod}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a payment method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {advanceMethods.map((method) => (
+                        <SelectItem key={method.id} value={method.method_key}>
+                          {method.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Show QR Code and Account Number if method is selected */}
+                  {selectedAdvanceMethod && (
+                    <div className="bg-white p-4 rounded-lg border space-y-3">
+                      <h4 className="font-medium text-gray-900">{selectedAdvanceMethod.name} Details</h4>
+                      
+                      {selectedAdvanceMethod.qr_code_url && (
+                        <div>
+                          <Label className="text-sm text-gray-600">Scan QR Code</Label>
+                          <img
+                            src={selectedAdvanceMethod.qr_code_url}
+                            alt={`${selectedAdvanceMethod.name} QR Code`}
+                            className="w-48 h-48 object-contain border rounded mt-2"
+                          />
+                        </div>
+                      )}
+                      
+                      {selectedAdvanceMethod.account_number && (
+                        <div>
+                          <Label className="text-sm text-gray-600">Account Number</Label>
+                          <p className="font-mono text-lg font-semibold text-gray-900 mt-1">
+                            {selectedAdvanceMethod.account_number}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Payment Proof Upload */}
+                      <div className="space-y-2 pt-3 border-t">
+                        <Label className="text-sm text-gray-700">
+                          Upload Payment Proof (Screenshot) *
+                        </Label>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => setPaymentProof(e.target.files?.[0] || null)}
+                          required={formData.paymentType === 'advance_payment'}
+                          className="cursor-pointer"
+                        />
+                        {paymentProof && (
+                          <p className="text-sm text-green-600 flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            {paymentProof.name}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500">
+                          Please upload a screenshot of your payment receipt
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Submit Button */}

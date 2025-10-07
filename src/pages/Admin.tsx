@@ -27,6 +27,7 @@ import ModernProductManager from '@/components/admin/ModernProductManager';
 import OrdersManager from '@/components/admin/OrdersManager';
 import PasswordManager from '@/components/admin/PasswordManager';
 import FormManager from '@/components/admin/FormManager';
+import PaymentMethodsManager from '@/components/admin/PaymentMethodsManager';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -338,6 +339,15 @@ const Admin = () => {
                   <Settings className="h-4 w-4" />
                   <span>Settings</span>
                 </button>
+                <button
+                  onClick={() => setActiveTab('payment-methods')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeTab === 'payment-methods' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                  }`}
+                >
+                  <DollarSign className="h-4 w-4" />
+                  <span>Payment</span>
+                </button>
               </div>
             </div>
           </div>
@@ -600,6 +610,10 @@ const Admin = () => {
                 Feature Available in Full Version
               </Button>
             </div>
+          </TabsContent>
+
+          <TabsContent value="payment-methods">
+            <PaymentMethodsManager />
           </TabsContent>
 
           <TabsContent value="forms">
