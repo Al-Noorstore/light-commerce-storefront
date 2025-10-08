@@ -6,12 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 const Auth: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('signin');
@@ -68,6 +71,26 @@ const Auth: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (!displayName.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter your full name.",
+        variant: "destructive"
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (!phoneNumber.trim()) {
+      toast({
+        title: "Phone Number Required",
+        description: "Please enter your phone number.",
+        variant: "destructive"
+      });
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast({
         title: "Password Mismatch",
@@ -89,7 +112,12 @@ const Auth: React.FC = () => {
     }
 
     try {
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, {
+        data: {
+          display_name: displayName,
+          phone_number: phoneNumber
+        }
+      });
       
       if (error) {
         if (error.message.includes('already registered')) {
@@ -192,10 +220,25 @@ const Auth: React.FC = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Full Name
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
                     <Mail className="w-4 h-4" />
                     Email
-                  </label>
+                  </Label>
                   <Input
                     type="email"
                     placeholder="Enter your email"
@@ -205,12 +248,27 @@ const Auth: React.FC = () => {
                     disabled={loading}
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    Phone Number
+                  </Label>
+                  <Input
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
                     <Lock className="w-4 h-4" />
                     Password
-                  </label>
+                  </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -234,10 +292,10 @@ const Auth: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
+                  <Label className="text-sm font-medium flex items-center gap-2">
                     <Lock className="w-4 h-4" />
                     Confirm Password
-                  </label>
+                  </Label>
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Confirm your password"

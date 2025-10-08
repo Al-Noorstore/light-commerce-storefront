@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Upload, Trash2 } from 'lucide-react';
+import { Upload, Trash2, Plus } from 'lucide-react';
 
 interface PaymentMethod {
   id: string;
@@ -23,6 +25,12 @@ interface PaymentMethod {
 export default function PaymentMethodsManager() {
   const queryClient = useQueryClient();
   const [uploadingQR, setUploadingQR] = useState<string | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newMethodName, setNewMethodName] = useState('');
+  const [newMethodType, setNewMethodType] = useState<'cash_on_delivery' | 'advance_payment'>('advance_payment');
+  const [newMethodKey, setNewMethodKey] = useState('');
+  const [newAccountNumber, setNewAccountNumber] = useState('');
+  const [newQRFile, setNewQRFile] = useState<File | null>(null);
 
   const { data: paymentMethods, isLoading } = useQuery({
     queryKey: ['payment-methods-admin'],
@@ -93,6 +101,69 @@ export default function PaymentMethodsManager() {
     });
   };
 
+  const createMethod = useMutation({
+    mutationFn: async () => {
+      // First, upload QR code if provided
+      let qrCodeUrl = null;
+      if (newQRFile) {
+        const fileExt = newQRFile.name.split('.').pop();
+        const fileName = `qr-${newMethodKey}-${Date.now()}.${fileExt}`;
+        const filePath = `payment-qr/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('payment-qr')
+          .upload(filePath, newQRFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('payment-qr')
+          .getPublicUrl(filePath);
+
+        qrCodeUrl = publicUrl;
+      }
+
+      // Get the highest display_order
+      const { data: existingMethods } = await supabase
+        .from('payment_methods')
+        .select('display_order')
+        .order('display_order', { ascending: false })
+        .limit(1);
+
+      const nextOrder = existingMethods && existingMethods.length > 0 
+        ? (existingMethods[0].display_order || 0) + 1 
+        : 0;
+
+      // Create the payment method
+      const { error } = await supabase
+        .from('payment_methods')
+        .insert({
+          name: newMethodName,
+          type: newMethodType,
+          method_key: newMethodKey.toLowerCase().replace(/\s+/g, '_'),
+          account_number: newAccountNumber || null,
+          qr_code_url: qrCodeUrl,
+          is_enabled: true,
+          display_order: nextOrder,
+        });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-methods-admin'] });
+      toast.success('Payment method created successfully');
+      setIsAddDialogOpen(false);
+      setNewMethodName('');
+      setNewMethodType('advance_payment');
+      setNewMethodKey('');
+      setNewAccountNumber('');
+      setNewQRFile(null);
+    },
+    onError: (error) => {
+      toast.error('Failed to create payment method: ' + error.message);
+    },
+  });
+
   if (isLoading) {
     return <div className="p-6">Loading payment methods...</div>;
   }
@@ -102,11 +173,92 @@ export default function PaymentMethodsManager() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Payment Methods Configuration</h2>
-        <p className="text-muted-foreground mb-6">
-          Configure payment methods, add QR codes, and account numbers
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Payment Methods Configuration</h2>
+          <p className="text-muted-foreground">
+            Configure payment methods, add QR codes, and account numbers
+          </p>
+        </div>
+        
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              Add Payment Method
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add New Payment Method</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Payment Method Name</Label>
+                <Input
+                  placeholder="e.g., PayPal, Stripe, Bank Transfer"
+                  value={newMethodName}
+                  onChange={(e) => setNewMethodName(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Method Key (unique identifier)</Label>
+                <Input
+                  placeholder="e.g., paypal, stripe, bank_transfer"
+                  value={newMethodKey}
+                  onChange={(e) => setNewMethodKey(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Type</Label>
+                <Select value={newMethodType} onValueChange={(value: 'cash_on_delivery' | 'advance_payment') => setNewMethodType(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cash_on_delivery">Cash on Delivery</SelectItem>
+                    <SelectItem value="advance_payment">Advance Payment</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {newMethodType === 'advance_payment' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Account Number / ID (optional)</Label>
+                    <Input
+                      placeholder="Enter account number or ID"
+                      value={newAccountNumber}
+                      onChange={(e) => setNewAccountNumber(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>QR Code (optional)</Label>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setNewQRFile(file);
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+
+              <Button 
+                className="w-full" 
+                onClick={() => createMethod.mutate()}
+                disabled={!newMethodName || !newMethodKey || createMethod.isPending}
+              >
+                {createMethod.isPending ? 'Creating...' : 'Create Payment Method'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Cash on Delivery Section */}

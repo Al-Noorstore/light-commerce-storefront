@@ -106,6 +106,16 @@ const Index = () => {
               <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Home</Link>
               <Link to="/contact" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Contact</Link>
               <Link to="/faqs" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">FAQs</Link>
+              {user ? (
+                isAdmin && (
+                  <Link to="/admin" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Admin</Link>
+                )
+              ) : (
+                <Link to="/auth" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                  <LogIn className="w-4 h-4" />
+                  Login / Sign Up
+                </Link>
+              )}
             </div>
           )}
           
