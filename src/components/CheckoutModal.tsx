@@ -206,11 +206,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
       const quantity = productQuantities[product.id] || 1;
       const subtotal = productPrice * quantity;
-      const shippingCost = 150; // This will be dynamic based on product settings
+      // Use product's delivery charges if available, otherwise default to 150
+      const shippingCost = product.delivery_charges ?? 150;
       return { subtotal, shipping: shippingCost, total: subtotal + shippingCost };
     } else {
       const subtotal = getTotalPrice();
-      const shippingCost = 150;
+      // For cart orders, we'll need to get the max delivery charge from items
+      const maxDeliveryCharge = Math.max(...items.map(item => item.delivery_charges ?? 150));
+      const shippingCost = maxDeliveryCharge;
       return { subtotal, shipping: shippingCost, total: subtotal + shippingCost };
     }
   };

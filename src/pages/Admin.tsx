@@ -96,30 +96,27 @@ const Admin = () => {
     );
   }
 
+  // Auto-redirect non-admin users to auth page
+  useEffect(() => {
+    if (!authLoading && !isAdmin && !user) {
+      navigate('/auth');
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in with admin credentials to access the admin panel.",
+        variant: "destructive"
+      });
+    } else if (!authLoading && user && !isAdmin) {
+      toast({
+        title: "Access Denied",
+        description: "You don't have admin privileges. Please contact the administrator.",
+        variant: "destructive"
+      });
+      navigate('/');
+    }
+  }, [authLoading, isAdmin, user, navigate, toast]);
+
   if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
-        <div className="text-center space-y-6">
-          <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
-            <Shield className="w-8 h-8 text-destructive" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">Access Denied</h1>
-            <p className="text-muted-foreground max-w-md">
-              You need admin privileges to access this panel. Please sign up with the admin email: alnoormall.pk@gmail.com
-            </p>
-          </div>
-          <div className="flex gap-3 justify-center">
-            <Button onClick={() => navigate('/auth')} variant="default">
-              Go to Login
-            </Button>
-            <Button onClick={() => navigate('/')} variant="outline">
-              Back to Store
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return null; // Will redirect via useEffect
   }
 
   const statsData = {

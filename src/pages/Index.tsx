@@ -86,14 +86,14 @@ const Index = () => {
               <CartSidebar onCheckout={handleCartCheckout} />
             </nav>
             
-            <div className="flex items-center space-x-3">
-              {/* Cart Icon */}
+            <div className="flex md:hidden items-center space-x-3">
+              {/* Cart Icon - Mobile only */}
               <CartSidebar onCheckout={handleCartCheckout} />
               
               {/* Mobile Menu Button */}
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 {isMenuOpen ? <X className="h-6 w-6 text-gray-600" /> : <Menu className="h-6 w-6 text-gray-600" />}
               </button>
